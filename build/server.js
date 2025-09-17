@@ -16,7 +16,7 @@ exports.app = (0, express_1.default)();
 // middlewares
 exports.app.use((0, cors_1.default)({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"], credentials: true }));
 // routes
-exports.app.use("/api/v1", router_1.httpRouter);
+exports.app.use("/api", router_1.httpRouter);
 // error handling middlware
 exports.app.use(errorHandler_1.errorHandler);
 // ws middleware

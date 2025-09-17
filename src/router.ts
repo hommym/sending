@@ -1,11 +1,12 @@
 import { Router } from "express";
+import { authRouter } from "./features/auth/authController";
 
 
 export const httpRouter = Router();
 
 // main routes
 
-// httpRouter.use("/auth", authRouter);
+httpRouter.use("/auth", authRouter);
 // httpRouter.use("/contacts", contactsRouter);
 // httpRouter.use("/chat", chatRouter);
 // httpRouter.use("/community", communityRouter);

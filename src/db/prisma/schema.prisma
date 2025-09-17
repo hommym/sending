@@ -9,6 +9,15 @@ generator client {
   output   = "../../../node_modules/.prisma/client"
 }
 
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
