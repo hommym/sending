@@ -40,3 +40,23 @@ export type AuthVerifyAccountArgs = {
   email: string;
   otp: string;
 };
+
+export type AccountUpdateInfoArgs = {
+  userId: number | string;
+  name?: string;
+  email?: string;
+  isAdmin?: boolean;
+};
+
+export type AccountChangePasswordArgs = {
+  userId: number | string;
+  oldPassword: string;
+  newPassword: string;
+  isAdmin?: boolean;
+};
+
+export type AccountDeleteArgs = {
+  userId: number | string;
+  password: string;
+  isAdmin?: boolean;
+};
