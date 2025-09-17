@@ -92,8 +92,33 @@ class AuthService {
                 }
                 await (0, bcrypt_1.verifyEncryptedData)(password, user.password);
                 const token = (0, jwt_1.jwtForLogIn)(user.id);
+                // Check if the user has an account, if not, create one
+                let account = await prisma.account.findUnique({ where: { userId: user.id } });
+                if (!account) {
+                    const accountNumber = await this.generateTenDigitAccountNumber();
+                    account = await prisma.account.create({
+                        data: {
+                            userId: user.id,
+                            accountNo: accountNumber,
+                        },
+                    });
+                }
                 return { token, user, role: "user" };
             }
+        };
+        this.generateTenDigitAccountNumber = async () => {
+            let accountNumber;
+            let isUnique = false;
+            do {
+                accountNumber = Math.floor(1000000000 + Math.random() * 9000000000); // 10-digit number
+                const existingAccount = await prisma.account.findUnique({
+                    where: { accountNo: accountNumber },
+                });
+                if (!existingAccount) {
+                    isUnique = true;
+                }
+            } while (!isUnique);
+            return accountNumber;
         };
         this.resetPassword = async (args) => {
             const { email, newPassword, otp } = args;

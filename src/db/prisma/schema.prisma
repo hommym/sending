@@ -23,15 +23,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum TransactionType{
+sender
+recipient
+}
+
+
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String?
-  createdAt DateTime @default(now())
-  isVerified Boolean @default(false)
-  otp       Otp?
-  account   Account?
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  password      String
+  name          String?
+  createdAt     DateTime @default(now())
+  isVerified    Boolean @default(false)
+  otp           Otp?
+  transactions  Transaction[]
+  account       Account?
 }
 
 model Otp {
@@ -47,8 +54,8 @@ model Otp {
 
 model Account {
   userId      Int      @id
-  accountNo   Int
-  expiresAt   DateTime?
+  accountNo   Int      @unique
+  balance     String   @default("0.00")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -56,12 +63,13 @@ model Account {
 }
 
 model Transaction {
-  id          Int      @id @default(autoincrement())
-  amount      Float
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  senderId    Int
-  recipientId Int
-  
+  ref          Int      @id @default(autoincrement())
+  amount       String
+  description  String?
+  type         TransactionType    @default(sender)
+  ownerId      Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [ownerId], references: [id])
 }
