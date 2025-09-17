@@ -1,91 +1,53 @@
+import dotenv from "dotenv";
+dotenv.config();
 import axios from "axios";
 import { AppError } from "../middlewares/errorHandler";
+import { GenerateAndSendOtpArgs, ArkeselGenerateResponse, VerifySmsOtpArgs, ArkeselVerifyResponse } from "../types/generalTypes";
 
-interface GenerateOtpArgs {
-  expiry?: number;
-  length?: number;
-  medium?: "sms" | "voice";
-  message?: string;
-  number: string;
-  sender_id?: string;
-  type?: "numeric" | "alphanumeric";
-}
-
-interface VerifyOtpArgs {
-  code: string;
-  number: string;
-}
+const ARKESEL_API_KEY = process.env.SMS_APIKEY;
+const ARKESEL_BASE_URL = "https://sms.arkesel.com/api";
 
 class SmsService {
-  private apiKey = process.env.SMS_APIKEY;
-  private generateOtpUrl = "https://sms.arkesel.com/api/otp/generate";
-  private verifyOtpUrl = "https://sms.arkesel.com/api/otp/verify";
-
-  public generateOtp = async (args: GenerateOtpArgs) => {
-    const {
-      expiry = 5,
-      length = 6,
-      medium = "sms",
-      message = "This is your OTP from Arkesel: %otp_code%",
-      number,
-      sender_id = "Arkesel",
-      type = "numeric",
-    } = args;
-
-    try {
-      const response = await axios.post(
-        this.generateOtpUrl,
-        {
-          expiry,
-          length,
-          medium,
-          message,
-          number,
-          sender_id,
-          type,
-        },
-        {
-          headers: {
-            "api-key": this.apiKey,
-          },
-        }
-      );
-
-      if (response.data.code !== "1000") {
-        throw new AppError(response.data.message, 400);
-      }
-
-      return response.data;
-    } catch (error: any) {
-      throw new AppError(error.message || "Failed to send OTP", 500);
+  private async sendRequest<T>(endpoint: string, data: any): Promise<T> {
+    if (!ARKESEL_API_KEY) {
+      throw new AppError("Arkesel API key not configured", 500);
     }
+    try {
+      const response = await axios.post<T>(`${ARKESEL_BASE_URL}${endpoint}`, data, {
+        headers: {
+          "api-key": ARKESEL_API_KEY,
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new AppError(error.response.data.message || "Arkesel API Error", error.response.status);
+      } else {
+        throw new AppError("Failed to communicate with Arkesel API", 500);
+      }
+    }
+  }
+
+  public generateAndSendOtp = async (args: GenerateAndSendOtpArgs): Promise<ArkeselGenerateResponse> => {
+    const { number, sender_id, message, type, medium, expiry, length } = args;
+    return this.sendRequest<ArkeselGenerateResponse>("/otp/generate", {
+      number,
+      sender_id,
+      message,
+      type,
+      medium,
+      expiry,
+      length,
+    });
   };
 
-  public verifyOtp = async (args: VerifyOtpArgs) => {
+  public verifyOtp = async (args: VerifySmsOtpArgs): Promise<ArkeselVerifyResponse> => {
     const { code, number } = args;
-
-    try {
-      const response = await axios.post(
-        this.verifyOtpUrl,
-        {
-          code,
-          number,
-        },
-        {
-          headers: {
-            "api-key": this.apiKey,
-          },
-        }
-      );
-
-      if (response.data.code !== "1000") {
-        throw new AppError(response.data.message, 400);
-      }
-
-      return response.data;
-    } catch (error: any) {
-      throw new AppError(error.message || "Failed to verify OTP", 500);
-    }
+    return this.sendRequest<ArkeselVerifyResponse>("/otp/verify", {
+      code,
+      number,
+    });
   };
 }
 

@@ -78,3 +78,30 @@ export type GetTransactionsArgs = {
   userId: number | string;
   isAdmin?: boolean;
 };
+
+export type GenerateAndSendOtpArgs = {
+  number: string;
+  sender_id: string;
+  message: string;
+  type: "numeric" | "alphanumeric";
+  medium: "sms" | "voice";
+  expiry: number;
+  length: number;
+};
+
+export type VerifySmsOtpArgs = {
+  code: string;
+  number: string;
+};
+
+export type ArkeselGenerateResponse = {
+  code: string;
+  ussd_code: string;
+  message: string;
+};
+
+export type ArkeselVerifyResponse = {
+  code: string;
+  ussd_code: string;
+  message: string;
+};
