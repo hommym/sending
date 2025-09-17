@@ -224,7 +224,11 @@ This section details endpoints for managing user and admin accounts.
       "name": "Your Name",
       "email": "user@example.com",
       "createdAt": "2023-01-01T12:00:00.000Z",
-      "isVerified": true (for users) or "updatedAt": "2023-01-01T13:00:00.000Z" (for admins)
+      "isVerified": true,
+      "account": {
+        "accountNo": 1234567890,
+        "balance": "1000.00"
+      }
     }
   }
   ```
@@ -265,7 +269,11 @@ This section details endpoints for managing user and admin accounts.
         "name": "User Name",
         "email": "user@example.com",
         "createdAt": "2023-01-01T12:00:00.000Z",
-        "isVerified": true
+        "isVerified": true,
+        "account": {
+          "accountNo": 1234567890,
+          "balance": "1000.00"
+        }
       }
     ],
     "admins": [

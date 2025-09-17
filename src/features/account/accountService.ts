@@ -100,7 +100,7 @@ class AccountService {
     } else {
       entity = await prisma.user.findUnique({
         where: { id: Number(userId) },
-        select: { id: true, name: true, email: true, createdAt: true, isVerified: true },
+        select: { id: true, name: true, email: true, createdAt: true, isVerified: true, account: { select: { accountNo: true, balance: true } } },
       });
     }
 
@@ -138,7 +138,7 @@ class AccountService {
 
   public getAllAccounts = async () => {
     const users = await prisma.user.findMany({
-      select: { id: true, name: true, email: true, createdAt: true, isVerified: true },
+      select: { id: true, name: true, email: true, createdAt: true, isVerified: true, account: { select: { accountNo: true, balance: true } } },
     });
     const admins = await prisma.admin.findMany({
       select: { id: true, name: true, email: true, createdAt: true, updatedAt: true },

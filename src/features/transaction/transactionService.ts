@@ -37,7 +37,7 @@ class TransactionService {
     await prisma.transaction.create({
       data: {
         ownerId: recipientEntity.id,
-        amount: amount,
+        amount: `${amount}`,
         type: "recipient",
         description: `Account credited by admin`,
       },
@@ -89,7 +89,7 @@ class TransactionService {
       await tx.transaction.create({
         data: {
           ownerId: senderAccount.userId,
-          amount: amount,
+          amount: `${amount}`,
           type: "sender",
           description: description || `Sent money to account ${recipientAccountNo}`,
         },
@@ -99,7 +99,7 @@ class TransactionService {
       await tx.transaction.create({
         data: {
           ownerId: recipientAccount.userId,
-          amount: amount,
+          amount: `${amount}`,
           type: "recipient",
           description: description || `Received money from account ${senderAccount.accountNo}`,
         },

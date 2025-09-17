@@ -23,12 +23,14 @@ export type AuthLogInArgs = {
 };
 
 export type AuthSendOtpArgs = {
-  email: string;
+  email?: string;
+  phone?: string;
 };
 
 export type AuthVerifyOtpArgs = {
-  email: string;
+  email?: string;
   otp: string;
+  phone?: string;
 };
 
 export type AuthResetPasswordArgs = {
@@ -40,6 +42,34 @@ export type AuthResetPasswordArgs = {
 export type AuthVerifyAccountArgs = {
   email: string;
   otp: string;
+  phone?: string;
+};
+
+export type UserAccountDetails = {
+  accountNo: bigint;
+  balance: string;
+};
+
+export type UserDetailsResponse = {
+  id: number;
+  name: string | null;
+  email: string;
+  createdAt: Date;
+  isVerified: boolean;
+  account: UserAccountDetails | null;
+};
+
+export type AdminDetailsResponse = {
+  id: number;
+  name: string | null;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type AllAccountsResponse = {
+  users: UserDetailsResponse[];
+  admins: AdminDetailsResponse[];
 };
 
 export type AccountUpdateInfoArgs = {
