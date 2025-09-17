@@ -13,6 +13,7 @@ export type AuthSignUpArgs = {
   email: string;
   password: string;
   name?: string;
+  phone?: string;
 };
 
 export type AuthLogInArgs = {

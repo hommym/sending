@@ -16,7 +16,8 @@ The authentication service provides the following endpoints:
   {
     "email": "user@example.com",
     "password": "your_password",
-    "name": "Your Name" (optional)
+    "name": "Your Name" (optional),
+    "phone": "+1234567890" (optional)
   }
   ```
 - **Response:**

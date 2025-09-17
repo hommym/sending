@@ -6,8 +6,8 @@ const authService_1 = require("./authService");
 exports.authRouter = (0, express_1.Router)();
 exports.authRouter.post("/signup", async (req, res, next) => {
     try {
-        const { email, password, name } = req.body;
-        const result = await authService_1.authService.signUp({ email, password, name });
+        const { email, password, name, phone } = req.body;
+        const result = await authService_1.authService.signUp({ email, password, name, phone });
         res.status(201).json(result);
     }
     catch (error) {

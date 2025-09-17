@@ -6,8 +6,8 @@ export const authRouter = Router();
 
 authRouter.post("/signup", async (req, res, next) => {
   try {
-    const { email, password, name } = req.body;
-    const result = await authService.signUp({ email, password, name });
+    const { email, password, name, phone } = req.body;
+    const result = await authService.signUp({ email, password, name, phone });
     res.status(201).json(result);
   } catch (error) {
     next(error);

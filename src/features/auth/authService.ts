@@ -10,7 +10,7 @@ const prisma = database as PrismaClient;
 
 class AuthService {
   public signUp = async (args: AuthSignUpArgs) => {
-    const { email, password, name } = args;
+    const { email, password, name, phone } = args;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -24,6 +24,7 @@ class AuthService {
         email,
         password: hashedPassword,
         name,
+        phone,
       },
     });
 

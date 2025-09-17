@@ -10,7 +10,7 @@ const prisma = db_1.database;
 class AuthService {
     constructor() {
         this.signUp = async (args) => {
-            const { email, password, name } = args;
+            const { email, password, name, phone } = args;
             const existingUser = await prisma.user.findUnique({ where: { email } });
             if (existingUser) {
                 throw new errorHandler_1.AppError("User with this email already exists", 409);
@@ -21,6 +21,7 @@ class AuthService {
                     email,
                     password: hashedPassword,
                     name,
+                    phone,
                 },
             });
             // Send OTP for account verification
