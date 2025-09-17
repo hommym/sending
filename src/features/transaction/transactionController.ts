@@ -2,11 +2,12 @@ import { Router } from "express";
 import { transactionService } from "./transactionService";
 import { verifyAuthToken } from "../../utils/jwt";
 import { AppError } from "../../middlewares/errorHandler";
+import { validateCreditAccount, validateSendMoney } from "../../middlewares/validation";
 
 export const transactionRouter = Router();
 
 // Admin only: Credit a user's account
-transactionRouter.post("/credit", verifyAuthToken, async (req, res, next) => {
+transactionRouter.post("/credit", verifyAuthToken, validateCreditAccount, async (req, res, next) => {
   try {
     const { recipientId, amount, recipientIsAdmin } = req.body;
     const isAdmin = req.isAdmin;
@@ -27,7 +28,7 @@ transactionRouter.post("/credit", verifyAuthToken, async (req, res, next) => {
 });
 
 // User: Send money to another account
-transactionRouter.post("/send", verifyAuthToken, async (req, res, next) => {
+transactionRouter.post("/send", verifyAuthToken, validateSendMoney, async (req, res, next) => {
   try {
     const { recipientAccountNo, amount, description } = req.body;
     const senderId = req.userId;

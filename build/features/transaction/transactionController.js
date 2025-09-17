@@ -5,9 +5,10 @@ const express_1 = require("express");
 const transactionService_1 = require("./transactionService");
 const jwt_1 = require("../../utils/jwt");
 const errorHandler_1 = require("../../middlewares/errorHandler");
+const validation_1 = require("../../middlewares/validation");
 exports.transactionRouter = (0, express_1.Router)();
 // Admin only: Credit a user's account
-exports.transactionRouter.post("/credit", jwt_1.verifyAuthToken, async (req, res, next) => {
+exports.transactionRouter.post("/credit", jwt_1.verifyAuthToken, validation_1.validateCreditAccount, async (req, res, next) => {
     try {
         const { recipientId, amount, recipientIsAdmin } = req.body;
         const isAdmin = req.isAdmin;
@@ -25,7 +26,7 @@ exports.transactionRouter.post("/credit", jwt_1.verifyAuthToken, async (req, res
     }
 });
 // User: Send money to another account
-exports.transactionRouter.post("/send", jwt_1.verifyAuthToken, async (req, res, next) => {
+exports.transactionRouter.post("/send", jwt_1.verifyAuthToken, validation_1.validateSendMoney, async (req, res, next) => {
     try {
         const { recipientAccountNo, amount, description } = req.body;
         const senderId = req.userId;

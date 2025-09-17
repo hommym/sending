@@ -2,10 +2,11 @@ import { Router } from "express";
 import { accountService } from "./accountService";
 import { verifyAuthToken } from "../../utils/jwt";
 import { AppError } from "../../middlewares/errorHandler";
+import { validateUpdateAccountInfo, validateChangePassword, validateDeleteAccount } from "../../middlewares/validation";
 
 export const accountRouter = Router();
 
-accountRouter.put("/update-info", verifyAuthToken, async (req, res, next) => {
+accountRouter.put("/update-info", verifyAuthToken, validateUpdateAccountInfo, async (req, res, next) => {
   try {
     const { name, email } = req.body;
     const userId = req.userId;
@@ -22,7 +23,7 @@ accountRouter.put("/update-info", verifyAuthToken, async (req, res, next) => {
   }
 });
 
-accountRouter.patch("/change-password", verifyAuthToken, async (req, res, next) => {
+accountRouter.patch("/change-password", verifyAuthToken, validateChangePassword, async (req, res, next) => {
   try {
     const { oldPassword, newPassword } = req.body;
     const userId = req.userId;
@@ -55,7 +56,7 @@ accountRouter.get("/details", verifyAuthToken, async (req, res, next) => {
   }
 });
 
-accountRouter.delete("/", verifyAuthToken, async (req, res, next) => {
+accountRouter.delete("/", verifyAuthToken, validateDeleteAccount, async (req, res, next) => {
   try {
     const { password } = req.body;
     const userId = req.userId;

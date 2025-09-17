@@ -17,9 +17,16 @@ The authentication service provides the following endpoints:
     "email": "user@example.com",
     "password": "your_password",
     "name": "Your Name" (optional),
-    "phone": "+1234567890" (optional)
+    "phone": "+1234567890" (optional, E.164 format, e.g., +23350304789)
   }
   ```
+- **Validation:**
+
+  - `email`: Required, valid email format.
+  - `password`: Required, minimum 6 characters.
+  - `name`: Optional, string.
+  - `phone`: Optional, E.164 format (e.g., +1234567890).
+
 - **Response:**
   ```json
   {
@@ -40,6 +47,9 @@ The authentication service provides the following endpoints:
     "isAdmin": false (optional, defaults to false)
   }
   ```
+- **Validation:**
+  - `email`: Required, valid email format.
+  - `password`: Required.
 - **Response:**
   ```json
   {
@@ -65,6 +75,8 @@ The authentication service provides the following endpoints:
     "email": "user@example.com"
   }
   ```
+- **Validation:**
+  - `email`: Required, valid email format.
 - **Response:**
   ```json
   {
@@ -84,6 +96,9 @@ The authentication service provides the following endpoints:
     "otp": "123456"
   }
   ```
+- **Validation:**
+  - `email`: Required, valid email format.
+  - `otp`: Required, 6-digit number string.
 - **Response:**
   ```json
   {
@@ -104,6 +119,10 @@ The authentication service provides the following endpoints:
     "newPassword": "new_secure_password"
   }
   ```
+- **Validation:**
+  - `email`: Required, valid email format.
+  - `otp`: Required, 6-digit number string.
+  - `newPassword`: Required, minimum 6 characters.
 - **Response:**
   ```json
   {
@@ -123,6 +142,9 @@ The authentication service provides the following endpoints:
     "otp": "123456"
   }
   ```
+- **Validation:**
+  - `email`: Required, valid email format.
+  - `otp`: Required, 6-digit number string.
 - **Response:**
   ```json
   {
@@ -147,6 +169,10 @@ This section details endpoints for managing user and admin accounts.
     "email": "new_email@example.com" (optional)
   }
   ```
+- **Validation:**
+  - At least one of `name` or `email` must be provided.
+  - `name`: Optional, string.
+  - `email`: Optional, valid email format.
 - **Response:**
   ```json
   {
@@ -174,6 +200,9 @@ This section details endpoints for managing user and admin accounts.
     "newPassword": "new_secure_password"
   }
   ```
+- **Validation:**
+  - `oldPassword`: Required.
+  - `newPassword`: Required, minimum 6 characters.
 - **Response:**
   ```json
   {
@@ -212,6 +241,8 @@ This section details endpoints for managing user and admin accounts.
     "password": "your_current_password"
   }
   ```
+- **Validation:**
+  - `password`: Required.
 - **Response:**
   ```json
   {
@@ -262,16 +293,20 @@ This section outlines endpoints for managing money transactions.
 - **Request Body:**
   ```json
   {
-    "recipientId": "user_or_admin_id",
-    "amount": "100.00",
-    "recipientIsAdmin": false (optional, defaults to false)
+    "recipientId": 1,
+    "amount": 100.00,
+    "recipientIsAdmin": false (optional)
   }
   ```
+- **Validation:**
+  - `recipientId`: Required, number or string.
+  - `amount`: Required, positive number.
+  - `recipientIsAdmin`: Optional, boolean.
 - **Response:**
   ```json
   {
     "message": "Account credited successfully",
-    "newBalance": "1100.00"
+    "newBalance": 1100.0
   }
   ```
 
@@ -285,15 +320,19 @@ This section outlines endpoints for managing money transactions.
   ```json
   {
     "recipientAccountNo": 1234567890,
-    "amount": "50.00",
+    "amount": 50.00,
     "description": "For groceries" (optional)
   }
   ```
+- **Validation:**
+  - `recipientAccountNo`: Required, number.
+  - `amount`: Required, positive number.
+  - `description`: Optional, string.
 - **Response:**
   ```json
   {
     "message": "Money sent successfully",
-    "newBalance": "950.00"
+    "newBalance": 950.0
   }
   ```
 
@@ -309,7 +348,7 @@ This section outlines endpoints for managing money transactions.
     "transactions": [
       {
         "ref": 1,
-        "amount": "100.00",
+        "amount": 100.0,
         "description": "Initial credit",
         "type": "recipient",
         "ownerId": 1,
@@ -332,7 +371,7 @@ This section outlines endpoints for managing money transactions.
     "transactions": [
       {
         "ref": 1,
-        "amount": "100.00",
+        "amount": 100.0,
         "description": "Initial credit",
         "type": "recipient",
         "ownerId": 1,

@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { authService } from "./authService";
 import { AppError } from "../../middlewares/errorHandler";
+import { validateSignUp, validateLogin, validateSendOtp, validateVerifyOtp, validateResetPassword } from "../../middlewares/validation";
 
 export const authRouter = Router();
 
-authRouter.post("/signup", async (req, res, next) => {
+authRouter.post("/signup", validateSignUp, async (req, res, next) => {
   try {
     const { email, password, name, phone } = req.body;
     const result = await authService.signUp({ email, password, name, phone });
@@ -14,7 +15,7 @@ authRouter.post("/signup", async (req, res, next) => {
   }
 });
 
-authRouter.post("/login", async (req, res, next) => {
+authRouter.post("/login", validateLogin, async (req, res, next) => {
   try {
     const { email, password, isAdmin } = req.body;
     const { token, user, role } = await authService.logIn({ email, password, isAdmin });
@@ -24,7 +25,7 @@ authRouter.post("/login", async (req, res, next) => {
   }
 });
 
-authRouter.post("/send-otp", async (req, res, next) => {
+authRouter.post("/send-otp", validateSendOtp, async (req, res, next) => {
   try {
     const { email } = req.body;
     const result = await authService.sendOtp({ email });
@@ -34,7 +35,7 @@ authRouter.post("/send-otp", async (req, res, next) => {
   }
 });
 
-authRouter.post("/verify-otp", async (req, res, next) => {
+authRouter.post("/verify-otp", validateVerifyOtp, async (req, res, next) => {
   try {
     const { email, otp } = req.body;
     const result = await authService.verifyOtp({ email, otp });
@@ -44,7 +45,7 @@ authRouter.post("/verify-otp", async (req, res, next) => {
   }
 });
 
-authRouter.post("/reset-password", async (req, res, next) => {
+authRouter.post("/reset-password", validateResetPassword, async (req, res, next) => {
   try {
     const { email, newPassword, otp } = req.body;
     const result = await authService.resetPassword({ email, newPassword, otp });
@@ -54,7 +55,7 @@ authRouter.post("/reset-password", async (req, res, next) => {
   }
 });
 
-authRouter.post("/verify-account", async (req, res, next) => {
+authRouter.post("/verify-account", validateVerifyOtp, async (req, res, next) => {
   try {
     const { email, otp } = req.body;
     const result = await authService.verifyAccount({ email, otp });

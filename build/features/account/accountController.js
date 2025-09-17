@@ -5,8 +5,9 @@ const express_1 = require("express");
 const accountService_1 = require("./accountService");
 const jwt_1 = require("../../utils/jwt");
 const errorHandler_1 = require("../../middlewares/errorHandler");
+const validation_1 = require("../../middlewares/validation");
 exports.accountRouter = (0, express_1.Router)();
-exports.accountRouter.put("/update-info", jwt_1.verifyAuthToken, async (req, res, next) => {
+exports.accountRouter.put("/update-info", jwt_1.verifyAuthToken, validation_1.validateUpdateAccountInfo, async (req, res, next) => {
     try {
         const { name, email } = req.body;
         const userId = req.userId;
@@ -21,7 +22,7 @@ exports.accountRouter.put("/update-info", jwt_1.verifyAuthToken, async (req, res
         next(error);
     }
 });
-exports.accountRouter.patch("/change-password", jwt_1.verifyAuthToken, async (req, res, next) => {
+exports.accountRouter.patch("/change-password", jwt_1.verifyAuthToken, validation_1.validateChangePassword, async (req, res, next) => {
     try {
         const { oldPassword, newPassword } = req.body;
         const userId = req.userId;
@@ -50,7 +51,7 @@ exports.accountRouter.get("/details", jwt_1.verifyAuthToken, async (req, res, ne
         next(error);
     }
 });
-exports.accountRouter.delete("/", jwt_1.verifyAuthToken, async (req, res, next) => {
+exports.accountRouter.delete("/", jwt_1.verifyAuthToken, validation_1.validateDeleteAccount, async (req, res, next) => {
     try {
         const { password } = req.body;
         const userId = req.userId;
