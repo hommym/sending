@@ -60,3 +60,21 @@ export type AccountDeleteArgs = {
   password: string;
   isAdmin?: boolean;
 };
+
+export type CreditAccountArgs = {
+  recipientId: number | string;
+  amount: string;
+  recipientIsAdmin?: boolean;
+};
+
+export type SendMoneyArgs = {
+  senderId: number | string;
+  recipientAccountNo: number;
+  amount: string;
+  description?: string;
+};
+
+export type GetTransactionsArgs = {
+  userId: number | string;
+  isAdmin?: boolean;
+};
