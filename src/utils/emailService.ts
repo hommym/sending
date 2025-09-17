@@ -3,7 +3,7 @@ dotenv.config();
 import nodemailer, { type Transporter } from "nodemailer";
 
 import { AppError } from "../middlewares/errorHandler";
-import { ResetAccountEmailArgs, WelcomeEmailArgs } from "../types/generalTypes";
+import { OtpEmailArgs, WelcomeEmailArgs } from "../types/generalTypes";
 
 type SendEmailParams = {
   to: string;
@@ -27,11 +27,11 @@ class EmailService {
     const retries = process.env.EMAIL_MAX_RETRIES ? Number(process.env.EMAIL_MAX_RETRIES) : 3;
     const secure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : false;
 
-    if (!host) throw new AppError("No value found for env var: SMTP_HOST",500);
-    if (!port) throw new AppError("No value found for env var: SMTP_PORT",500);
-    if (!user) throw new AppError("No value found for env var: SMTP_USER",500);
-    if (!pass) throw new AppError("No value found for env var: SMTP_PASS",500);
-    if (!from) throw new AppError("No value found for env var: MAIL_FROM",500);
+    if (!host) throw new AppError("No value found for env var: SMTP_HOST", 500);
+    if (!port) throw new AppError("No value found for env var: SMTP_PORT", 500);
+    if (!user) throw new AppError("No value found for env var: SMTP_USER", 500);
+    if (!pass) throw new AppError("No value found for env var: SMTP_PASS", 500);
+    if (!from) throw new AppError("No value found for env var: MAIL_FROM", 500);
 
     this.transporter = nodemailer.createTransport({
       host,
@@ -56,17 +56,16 @@ class EmailService {
     await this.sendWithRetry({ to: recipientEmail, subject, text, html });
   };
 
-  public sendPasswordResetEmail = async (args: ResetAccountEmailArgs): Promise<void> => {
-    const { fullName, plainPassword, recipientEmail } = args;
-    const subject = `${this.companyName} - Your Password Has Been Reset`;
-    const text = `Hi ${fullName},\n\nYour ${this.companyName} password has been reset. Your temporary password is: ${plainPassword}\nPlease log in and change it immediately.`;
+  public sendOtpEmail = async (args: OtpEmailArgs): Promise<void> => {
+    const { fullName, otp, recipientEmail } = args;
+    const subject = `${this.companyName} - Your Verification Code`;
+    const text = `Hi ${fullName},\n\nYour ${this.companyName} verification code is: ${otp}\nThis code is valid for 10 minutes.`;
     const html = this.wrapHtmlTemplate(`
       <p>Hi <strong>${this.escapeHtml(fullName)}</strong>,</p>
-      <p>Your ${this.escapeHtml(this.companyName)} password has been reset.</p>
-      <p><strong>Temporary password:</strong> <code>${this.escapeHtml(plainPassword)}</code></p>
-      <p>Please log in and change it immediately.</p>
+      <p>Your ${this.escapeHtml(this.companyName)} verification code is:</p>
+      <p style="font-size: 24px; font-weight: bold;"><code>${this.escapeHtml(otp)}</code></p>
+      <p>This code is valid for 10 minutes.</p>
     `);
-
     await this.sendWithRetry({ to: recipientEmail, subject, text, html });
   };
 
@@ -90,7 +89,7 @@ class EmailService {
         await this.delay(this.backoffMs(attempt));
       }
     }
-    throw new AppError(`Failed to send email after some attempts`,500);
+    throw new AppError(`Failed to send email after some attempts`, 500);
   }
 
   private delay(ms: number): Promise<void> {

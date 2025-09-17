@@ -13,6 +13,8 @@ dotenv.config();
 
 
 export const app = express();
+
+app.use(express.json());
 // middlewares
 app.use(cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"], credentials: true }));
 

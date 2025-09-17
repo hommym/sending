@@ -7,7 +7,7 @@ This document outlines the authentication routes and how to access them.
 The authentication service provides the following endpoints:
 
 ### 1. Sign In (Register)
-- **URL:** `/api/auth/signin`
+- **URL:** `/api/auth/signup`
 - **Method:** `POST`
 - **Description:** Registers a new user.
 - **Request Body:**
@@ -39,7 +39,8 @@ The authentication service provides the following endpoints:
   ```json
   {
     "email": "user@example.com",
-    "password": "your_password"
+    "password": "your_password",
+    "isAdmin": false (optional, defaults to false)
   }
   ```
 - **Response:**
@@ -51,7 +52,8 @@ The authentication service provides the following endpoints:
       "email": "user@example.com",
       "name": "Your Name",
       "createdAt": "2023-01-01T12:00:00.000Z"
-    }
+    },
+    "role": "user" | "admin"
   }
   ```
 

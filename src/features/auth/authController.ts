@@ -4,11 +4,11 @@ import { AppError } from "../../middlewares/errorHandler";
 
 export const authRouter = Router();
 
-authRouter.post("/signin", async (req, res, next) => {
+authRouter.post("/signup", async (req, res, next) => {
   try {
     const { email, password, name } = req.body;
-    const { token, user } = await authService.signIn({ email, password, name });
-    res.status(201).json({ token, user });
+    const result = await authService.signUp({ email, password, name });
+    res.status(201).json(result);
   } catch (error) {
     next(error);
   }
@@ -16,9 +16,9 @@ authRouter.post("/signin", async (req, res, next) => {
 
 authRouter.post("/login", async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-    const { token, user } = await authService.logIn({ email, password });
-    res.status(200).json({ token, user });
+    const { email, password, isAdmin } = req.body;
+    const { token, user, role } = await authService.logIn({ email, password, isAdmin });
+    res.status(200).json({ token, user, role });
   } catch (error) {
     next(error);
   }
@@ -48,6 +48,16 @@ authRouter.post("/reset-password", async (req, res, next) => {
   try {
     const { email, newPassword, otp } = req.body;
     const result = await authService.resetPassword({ email, newPassword, otp });
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+authRouter.post("/verify-account", async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+    const result = await authService.verifyAccount({ email, otp });
     res.status(200).json(result);
   } catch (error) {
     next(error);

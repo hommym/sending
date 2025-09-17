@@ -13,6 +13,7 @@ const errorHandler_1 = require("./middlewares/errorHandler");
 const db_1 = require("./db/db");
 dotenv_1.default.config();
 exports.app = (0, express_1.default)();
+exports.app.use(express_1.default.json());
 // middlewares
 exports.app.use((0, cors_1.default)({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"], credentials: true }));
 // routes

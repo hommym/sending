@@ -20,15 +20,15 @@ class EmailService {
     `);
             await this.sendWithRetry({ to: recipientEmail, subject, text, html });
         };
-        this.sendPasswordResetEmail = async (args) => {
-            const { fullName, plainPassword, recipientEmail } = args;
-            const subject = `${this.companyName} - Your Password Has Been Reset`;
-            const text = `Hi ${fullName},\n\nYour ${this.companyName} password has been reset. Your temporary password is: ${plainPassword}\nPlease log in and change it immediately.`;
+        this.sendOtpEmail = async (args) => {
+            const { fullName, otp, recipientEmail } = args;
+            const subject = `${this.companyName} - Your Verification Code`;
+            const text = `Hi ${fullName},\n\nYour ${this.companyName} verification code is: ${otp}\nThis code is valid for 10 minutes.`;
             const html = this.wrapHtmlTemplate(`
       <p>Hi <strong>${this.escapeHtml(fullName)}</strong>,</p>
-      <p>Your ${this.escapeHtml(this.companyName)} password has been reset.</p>
-      <p><strong>Temporary password:</strong> <code>${this.escapeHtml(plainPassword)}</code></p>
-      <p>Please log in and change it immediately.</p>
+      <p>Your ${this.escapeHtml(this.companyName)} verification code is:</p>
+      <p style="font-size: 24px; font-weight: bold;"><code>${this.escapeHtml(otp)}</code></p>
+      <p>This code is valid for 10 minutes.</p>
     `);
             await this.sendWithRetry({ to: recipientEmail, subject, text, html });
         };

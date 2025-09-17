@@ -29,6 +29,7 @@ model User {
   password  String
   name      String?
   createdAt DateTime @default(now())
+  isVerified Boolean @default(false)
   otp       Otp?
   account   Account?
 }

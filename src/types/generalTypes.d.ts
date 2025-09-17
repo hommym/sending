@@ -3,13 +3,13 @@ export type WelcomeEmailArgs = {
   fullName: string;
 };
 
-export type ResetAccountEmailArgs = {
+export type OtpEmailArgs = {
   recipientEmail: string;
   fullName: string;
-  plainPassword: string;
+  otp: string;
 };
 
-export type AuthSignInArgs = {
+export type AuthSignUpArgs = {
   email: string;
   password: string;
   name?: string;
@@ -18,6 +18,7 @@ export type AuthSignInArgs = {
 export type AuthLogInArgs = {
   email: string;
   password: string;
+  isAdmin?: boolean;
 };
 
 export type AuthSendOtpArgs = {
@@ -32,5 +33,10 @@ export type AuthVerifyOtpArgs = {
 export type AuthResetPasswordArgs = {
   email: string;
   newPassword: string;
+  otp: string;
+};
+
+export type AuthVerifyAccountArgs = {
+  email: string;
   otp: string;
 };

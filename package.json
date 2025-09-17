@@ -10,7 +10,7 @@
     "db:change": "npx prisma migrate dev --name",
     "db:deploy": "npm run db:generate && npx prisma migrate deploy",
     "db:reset": "npx prisma migrate reset && npm run seed",
-    "seed": "node ./build/common/database/seed.js"
+    "seed": "node ./build/db/seed/runSeeders.js"
   },
   "dependencies": {
     "axios": "^1.9.0",

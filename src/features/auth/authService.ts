@@ -3,20 +3,23 @@ import { encryptData, verifyEncryptedData } from "../../middlewares/bcrypt";
 import { AppError } from "../../middlewares/errorHandler";
 import { jwtForLogIn } from "../../middlewares/jwt";
 import { emailService } from "../../utils/emailService";
-import { AuthSignInArgs, AuthLogInArgs, AuthSendOtpArgs, AuthVerifyOtpArgs, AuthResetPasswordArgs } from "../../types/generalTypes";
+import { AuthSignUpArgs, AuthLogInArgs, AuthSendOtpArgs, AuthVerifyOtpArgs, AuthResetPasswordArgs, AuthVerifyAccountArgs, OtpEmailArgs } from "../../types/generalTypes";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = database as PrismaClient;
 
 class AuthService {
-  public signIn = async (args: AuthSignInArgs) => {
+  public signUp = async (args: AuthSignUpArgs) => {
     const { email, password, name } = args;
 
-    const existingUser = await database.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       throw new AppError("User with this email already exists", 409);
     }
 
     const hashedPassword = await encryptData(password);
 
-    const newUser = await database.user.create({
+    const newUser = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
@@ -24,16 +27,29 @@ class AuthService {
       },
     });
 
-    const token = jwtForLogIn(newUser.id);
-    await emailService.sendWelcomeEmail({ fullName: newUser.name || "User", recipientEmail: newUser.email });
+    // Send OTP for account verification
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
 
-    return { token, user: newUser };
+    await prisma.otp.upsert({
+      where: { userId: newUser.id },
+      update: { code: otpCode, expiresAt },
+      create: { userId: newUser.id, code: otpCode, expiresAt },
+    });
+
+    await emailService.sendOtpEmail({
+      fullName: newUser.name || "User",
+      recipientEmail: newUser.email,
+      otp: otpCode,
+    });
+
+    return { message: "Account created. Please verify your email with the OTP." };
   };
 
   public sendOtp = async (args: AuthSendOtpArgs) => {
     const { email } = args;
 
-    const user = await database.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       throw new AppError("User not found", 404);
     }
@@ -41,16 +57,16 @@ class AuthService {
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
 
-    await database.otp.upsert({
+    await prisma.otp.upsert({
       where: { userId: user.id },
       update: { code: otpCode, expiresAt },
       create: { userId: user.id, code: otpCode, expiresAt },
     });
 
-    await emailService.sendPasswordResetEmail({
+    await emailService.sendOtpEmail({
       fullName: user.name || "User",
       recipientEmail: user.email,
-      plainPassword: otpCode, // Sending OTP as plain password for simplicity, can be changed to a dedicated OTP email
+      otp: otpCode,
     });
 
     return { message: "OTP sent successfully" };
@@ -59,46 +75,63 @@ class AuthService {
   public verifyOtp = async (args: AuthVerifyOtpArgs) => {
     const { email, otp } = args;
 
-    const user = await database.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       throw new AppError("User not found", 404);
     }
 
-    const storedOtp = await database.otp.findUnique({ where: { userId: user.id } });
+    const storedOtp = await prisma.otp.findUnique({ where: { userId: user.id } });
 
     if (!storedOtp || storedOtp.code !== otp || storedOtp.expiresAt < new Date()) {
       throw new AppError("Invalid or expired OTP", 400);
     }
 
-    await database.otp.delete({ where: { userId: user.id } });
+    await prisma.otp.delete({ where: { userId: user.id } });
 
     return { message: "OTP verified successfully" };
   };
 
   public logIn = async (args: AuthLogInArgs) => {
-    const { email, password } = args;
+    const { email, password, isAdmin } = args;
 
-    const user = await database.user.findUnique({ where: { email } });
-    if (!user) {
-      throw new AppError("Invalid credentials", 401);
+    if (isAdmin) {
+      const admin = await prisma.admin.findUnique({ where: { email } });
+      if (!admin) {
+        throw new AppError("Invalid credentials", 401);
+      }
+
+      await verifyEncryptedData(password, admin.password);
+
+      const token = jwtForLogIn(admin.id, true);
+
+      return { token, user: admin, role: "admin" };
+    } else {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        throw new AppError("Invalid credentials", 401);
+      }
+
+      if (!user.isVerified) {
+        throw new AppError("Account not verified. Please verify your email.", 401);
+      }
+
+      await verifyEncryptedData(password, user.password);
+
+      const token = jwtForLogIn(user.id);
+
+      return { token, user, role: "user" };
     }
-
-    await verifyEncryptedData(password, user.password);
-
-    const token = jwtForLogIn(user.id);
-
-    return { token, user };
   };
 
   public resetPassword = async (args: AuthResetPasswordArgs) => {
     const { email, newPassword, otp } = args;
 
-    const user = await database.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       throw new AppError("User not found", 404);
     }
 
-    const storedOtp = await database.otp.findUnique({ where: { userId: user.id } });
+    const storedOtp = await prisma.otp.findUnique({ where: { userId: user.id } });
 
     if (!storedOtp || storedOtp.code !== otp || storedOtp.expiresAt < new Date()) {
       throw new AppError("Invalid or expired OTP", 400);
@@ -106,14 +139,42 @@ class AuthService {
 
     const hashedPassword = await encryptData(newPassword);
 
-    await database.user.update({
+    await prisma.user.update({
       where: { id: user.id },
       data: { password: hashedPassword },
     });
 
-    await database.otp.delete({ where: { userId: user.id } });
+    await prisma.otp.delete({ where: { userId: user.id } });
 
     return { message: "Password reset successfully" };
+  };
+
+  public verifyAccount = async (args: AuthVerifyAccountArgs) => {
+    const { email, otp } = args;
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    if (user.isVerified) {
+      throw new AppError("Account already verified", 400);
+    }
+
+    const storedOtp = await prisma.otp.findUnique({ where: { userId: user.id } });
+
+    if (!storedOtp || storedOtp.code !== otp || storedOtp.expiresAt < new Date()) {
+      throw new AppError("Invalid or expired OTP", 400);
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { isVerified: true },
+    });
+
+    await prisma.otp.delete({ where: { userId: user.id } });
+
+    return { message: "Account verified successfully." };
   };
 }
 
