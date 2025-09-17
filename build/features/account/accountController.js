@@ -65,3 +65,16 @@ exports.accountRouter.delete("/", jwt_1.verifyAuthToken, async (req, res, next) 
         next(error);
     }
 });
+exports.accountRouter.get("/admin/all-accounts", jwt_1.verifyAuthToken, async (req, res, next) => {
+    try {
+        const isAdmin = req.isAdmin;
+        if (!isAdmin) {
+            throw new errorHandler_1.AppError("Unauthorized: Admins only", 403);
+        }
+        const result = await accountService_1.accountService.getAllAccounts();
+        res.status(200).json(result);
+    }
+    catch (error) {
+        next(error);
+    }
+});

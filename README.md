@@ -218,6 +218,36 @@ This section details endpoints for managing user and admin accounts.
   }
   ```
 
+### 5. Get All Accounts (Admin Only)
+
+- **URL:** `/api/account/admin/all-accounts`
+- **Method:** `GET`
+- **Description:** Admin-only endpoint to retrieve details of all user and admin accounts in the system.
+- **Authentication:** Required (Admin JWT Token)
+- **Response:**
+  ```json
+  {
+    "users": [
+      {
+        "id": 1,
+        "name": "User Name",
+        "email": "user@example.com",
+        "createdAt": "2023-01-01T12:00:00.000Z",
+        "isVerified": true
+      }
+    ],
+    "admins": [
+      {
+        "id": 1,
+        "name": "Admin Name",
+        "email": "admin@example.com",
+        "createdAt": "2023-01-01T12:00:00.000Z",
+        "updatedAt": "2023-01-01T13:00:00.000Z"
+      }
+    ]
+  }
+  ```
+
 ## Transaction Service
 
 This section outlines endpoints for managing money transactions.

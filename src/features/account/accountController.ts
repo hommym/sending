@@ -71,3 +71,18 @@ accountRouter.delete("/", verifyAuthToken, async (req, res, next) => {
     next(error);
   }
 });
+
+accountRouter.get("/admin/all-accounts", verifyAuthToken, async (req, res, next) => {
+  try {
+    const isAdmin = req.isAdmin;
+
+    if (!isAdmin) {
+      throw new AppError("Unauthorized: Admins only", 403);
+    }
+
+    const result = await accountService.getAllAccounts();
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});

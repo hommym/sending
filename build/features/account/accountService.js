@@ -122,6 +122,15 @@ class AccountService {
             }
             return { message: "Account deleted successfully" };
         };
+        this.getAllAccounts = async () => {
+            const users = await prisma.user.findMany({
+                select: { id: true, name: true, email: true, createdAt: true, isVerified: true },
+            });
+            const admins = await prisma.admin.findMany({
+                select: { id: true, name: true, email: true, createdAt: true, updatedAt: true },
+            });
+            return { users, admins };
+        };
     }
 }
 exports.accountService = new AccountService();
