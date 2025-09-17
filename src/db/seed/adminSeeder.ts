@@ -1,4 +1,4 @@
-import { encryptData } from "../../middlewares/bcrypt";
+import { encryptData } from "../../utils/bcrypt";
 import { database } from "../db";
 
 export const adminSeeder = async () => {

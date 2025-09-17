@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adminSeeder = void 0;
-const bcrypt_1 = require("../../middlewares/bcrypt");
+const bcrypt_1 = require("../../utils/bcrypt");
 const db_1 = require("../db");
 const adminSeeder = async () => {
     try {

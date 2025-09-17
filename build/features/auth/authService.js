@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authService = void 0;
 const db_1 = require("../../db/db");
-const bcrypt_1 = require("../../middlewares/bcrypt");
+const bcrypt_1 = require("../../utils/bcrypt");
 const errorHandler_1 = require("../../middlewares/errorHandler");
-const jwt_1 = require("../../middlewares/jwt");
+const jwt_1 = require("../../utils/jwt");
 const emailService_1 = require("../../utils/emailService");
 const prisma = db_1.database;
 class AuthService {

@@ -1,7 +1,7 @@
 import { database } from "../../db/db";
-import { encryptData, verifyEncryptedData } from "../../middlewares/bcrypt";
+import { encryptData, verifyEncryptedData } from "../../utils/bcrypt";
 import { AppError } from "../../middlewares/errorHandler";
-import { jwtForLogIn } from "../../middlewares/jwt";
+import { jwtForLogIn } from "../../utils/jwt";
 import { emailService } from "../../utils/emailService";
 import { AuthSignUpArgs, AuthLogInArgs, AuthSendOtpArgs, AuthVerifyOtpArgs, AuthResetPasswordArgs, AuthVerifyAccountArgs, OtpEmailArgs } from "../../types/generalTypes";
 import { PrismaClient } from "@prisma/client";
