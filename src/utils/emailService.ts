@@ -42,7 +42,7 @@ class EmailService {
 
     this.fromAddress = from;
     this.maxRetries = Number.isFinite(retries) && retries > 0 ? retries : 3;
-    this.companyName = process.env.COMPANY_NAME || "PaschalGlobal Tv";
+    this.companyName = process.env.COMPANY_NAME || "Aceldaa Bank";
   }
 
   public sendWelcomeEmail = async (args: WelcomeEmailArgs): Promise<void> => {
