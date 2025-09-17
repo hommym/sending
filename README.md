@@ -128,3 +128,187 @@ The authentication service provides the following endpoints:
     "message": "Account verified successfully."
   }
   ```
+
+## Account Service
+
+This section details endpoints for managing user and admin accounts.
+
+### 1. Update Account Information
+
+- **URL:** `/api/account/update-info`
+- **Method:** `PUT`
+- **Description:** Updates the authenticated user's or admin's name and/or email.
+- **Authentication:** Required (JWT Token)
+- **Request Body:**
+  ```json
+  {
+    "name": "New Name" (optional),
+    "email": "new_email@example.com" (optional)
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "Account updated successfully",
+    "account": {
+      "id": 1,
+      "name": "New Name",
+      "email": "new_email@example.com",
+      "createdAt": "2023-01-01T12:00:00.000Z",
+      "isVerified": true (for users) or "updatedAt": "2023-01-01T13:00:00.000Z" (for admins)
+    }
+  }
+  ```
+
+### 2. Change Password
+
+- **URL:** `/api/account/change-password`
+- **Method:** `PATCH`
+- **Description:** Changes the authenticated user's or admin's password.
+- **Authentication:** Required (JWT Token)
+- **Request Body:**
+  ```json
+  {
+    "oldPassword": "current_password",
+    "newPassword": "new_secure_password"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "Password changed successfully"
+  }
+  ```
+
+### 3. Get Account Details
+
+- **URL:** `/api/account/details`
+- **Method:** `GET`
+- **Description:** Retrieves details for the authenticated user's or admin's account.
+- **Authentication:** Required (JWT Token)
+- **Response:**
+  ```json
+  {
+    "account": {
+      "id": 1,
+      "name": "Your Name",
+      "email": "user@example.com",
+      "createdAt": "2023-01-01T12:00:00.000Z",
+      "isVerified": true (for users) or "updatedAt": "2023-01-01T13:00:00.000Z" (for admins)
+    }
+  }
+  ```
+
+### 4. Delete Account
+
+- **URL:** `/api/account/`
+- **Method:** `DELETE`
+- **Description:** Deletes the authenticated user's or admin's account.
+- **Authentication:** Required (JWT Token)
+- **Request Body:**
+  ```json
+  {
+    "password": "your_current_password"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "Account deleted successfully"
+  }
+  ```
+
+## Transaction Service
+
+This section outlines endpoints for managing money transactions.
+
+### 1. Credit Account (Admin Only)
+
+- **URL:** `/api/transactions/credit`
+- **Method:** `POST`
+- **Description:** Admin-only endpoint to credit a user's or admin's account with a specified amount.
+- **Authentication:** Required (Admin JWT Token)
+- **Request Body:**
+  ```json
+  {
+    "recipientId": "user_or_admin_id",
+    "amount": "100.00",
+    "recipientIsAdmin": false (optional, defaults to false)
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "Account credited successfully",
+    "newBalance": "1100.00"
+  }
+  ```
+
+### 2. Send Money
+
+- **URL:** `/api/transactions/send`
+- **Method:** `POST`
+- **Description:** Sends money from the authenticated user's account to another user's account.
+- **Authentication:** Required (User JWT Token)
+- **Request Body:**
+  ```json
+  {
+    "recipientAccountNo": 1234567890,
+    "amount": "50.00",
+    "description": "For groceries" (optional)
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "Money sent successfully",
+    "newBalance": "950.00"
+  }
+  ```
+
+### 3. Get User Transactions
+
+- **URL:** `/api/transactions/history`
+- **Method:** `GET`
+- **Description:** Retrieves all transaction history for the authenticated user.
+- **Authentication:** Required (User JWT Token)
+- **Response:**
+  ```json
+  {
+    "transactions": [
+      {
+        "ref": 1,
+        "amount": "100.00",
+        "description": "Initial credit",
+        "type": "recipient",
+        "ownerId": 1,
+        "createdAt": "2023-01-01T12:00:00.000Z",
+        "updatedAt": "2023-01-01T12:00:00.000Z"
+      }
+    ]
+  }
+  ```
+
+### 4. Get All Transactions (Admin Only)
+
+- **URL:** `/api/transactions/admin/history`
+- **Method:** `GET`
+- **Description:** Admin-only endpoint to retrieve all transaction history in the system.
+- **Authentication:** Required (Admin JWT Token)
+- **Response:**
+  ```json
+  {
+    "transactions": [
+      {
+        "ref": 1,
+        "amount": "100.00",
+        "description": "Initial credit",
+        "type": "recipient",
+        "ownerId": 1,
+        "createdAt": "2023-01-01T12:00:00.000Z",
+        "updatedAt": "2023-01-01T12:00:00.000Z"
+      }
+      // ... more transactions
+    ]
+  }
+  ```
