@@ -1,8 +1,7 @@
+import "./utils/jsonSerializer";
 import "reflect-metadata";
 import express from "express";
 import dotenv from "dotenv";
-
-
 
 import cors from "cors";
 import { httpRouter } from "./router";
@@ -10,7 +9,6 @@ import { errorHandler } from "./middlewares/errorHandler";
 import { checkDbConnection } from "./db/db";
 
 dotenv.config();
-
 
 export const app = express();
 
@@ -34,7 +32,7 @@ const port = process.env.PORT ? process.env.PORT : 8000;
 
 const startServer = async () => {
   try {
-    await checkDbConnection(); 
+    await checkDbConnection();
     app.listen(port, () => {
       console.log(`Server listening on port ${port}..`);
     });

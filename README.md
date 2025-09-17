@@ -226,7 +226,7 @@ This section details endpoints for managing user and admin accounts.
       "createdAt": "2023-01-01T12:00:00.000Z",
       "isVerified": true,
       "account": {
-        "accountNo": 1234567890,
+        "accountNo": "1234567890",
         "balance": "1000.00"
       }
     }
@@ -271,7 +271,7 @@ This section details endpoints for managing user and admin accounts.
         "createdAt": "2023-01-01T12:00:00.000Z",
         "isVerified": true,
         "account": {
-          "accountNo": 1234567890,
+          "accountNo": "1234567890",
           "balance": "1000.00"
         }
       }

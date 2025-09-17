@@ -108,6 +108,10 @@ class AccountService {
       throw new AppError(isAdmin ? "Admin not found" : "User not found", 404);
     }
 
+    if (entity && "account" in entity && entity.account) {
+      return { account: { ...entity, account: { ...entity.account, accountNo: String(entity.account.accountNo) } } };
+    }
+
     return { account: entity };
   };
 
@@ -144,7 +148,14 @@ class AccountService {
       select: { id: true, name: true, email: true, createdAt: true, updatedAt: true },
     });
 
-    return { users, admins };
+    const usersWithSerializedAccountNo = users.map((user) => {
+      if (user.account) {
+        return { ...user, account: { ...user.account, accountNo: String(user.account.accountNo) } };
+      }
+      return user;
+    });
+
+    return { users: usersWithSerializedAccountNo, admins };
   };
 }
 

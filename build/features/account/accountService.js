@@ -99,6 +99,9 @@ class AccountService {
             if (!entity) {
                 throw new errorHandler_1.AppError(isAdmin ? "Admin not found" : "User not found", 404);
             }
+            if (entity && "account" in entity && entity.account) {
+                return { account: Object.assign(Object.assign({}, entity), { account: Object.assign(Object.assign({}, entity.account), { accountNo: String(entity.account.accountNo) }) }) };
+            }
             return { account: entity };
         };
         this.deleteAccount = async (args) => {
@@ -129,7 +132,13 @@ class AccountService {
             const admins = await prisma.admin.findMany({
                 select: { id: true, name: true, email: true, createdAt: true, updatedAt: true },
             });
-            return { users, admins };
+            const usersWithSerializedAccountNo = users.map((user) => {
+                if (user.account) {
+                    return Object.assign(Object.assign({}, user), { account: Object.assign(Object.assign({}, user.account), { accountNo: String(user.account.accountNo) }) });
+                }
+                return user;
+            });
+            return { users: usersWithSerializedAccountNo, admins };
         };
     }
 }
