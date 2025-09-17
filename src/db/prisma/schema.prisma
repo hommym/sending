@@ -55,7 +55,7 @@ model Otp {
 
 model Account {
   userId      Int      @id
-  accountNo   Int      @unique
+  accountNo   BigInt      @unique
   balance     String   @default("0.00")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
