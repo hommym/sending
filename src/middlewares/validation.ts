@@ -148,9 +148,9 @@ export const validateCreditAccount = (req: Request, res: Response, next: NextFun
     throw new AppError("Recipient ID must be a number or string", 400);
   }
 
-  if (typeof amount !== "number" || amount <= 0) {
-    throw new AppError("Amount must be a positive number", 400);
-  }
+  // if (typeof amount !== "number" || amount <= 0) {
+  //   throw new AppError("Amount must be a positive number", 400);
+  // }
 
   if (recipientIsAdmin !== undefined && typeof recipientIsAdmin !== "boolean") {
     throw new AppError("recipientIsAdmin must be a boolean", 400);

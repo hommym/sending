@@ -116,9 +116,9 @@ const validateCreditAccount = (req, res, next) => {
     if (typeof recipientId !== "number" && typeof recipientId !== "string") {
         throw new errorHandler_1.AppError("Recipient ID must be a number or string", 400);
     }
-    if (typeof amount !== "number" || amount <= 0) {
-        throw new errorHandler_1.AppError("Amount must be a positive number", 400);
-    }
+    // if (typeof amount !== "number" || amount <= 0) {
+    //   throw new AppError("Amount must be a positive number", 400);
+    // }
     if (recipientIsAdmin !== undefined && typeof recipientIsAdmin !== "boolean") {
         throw new errorHandler_1.AppError("recipientIsAdmin must be a boolean", 400);
     }
