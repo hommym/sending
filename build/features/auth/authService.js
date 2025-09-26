@@ -15,6 +15,12 @@ class AuthService {
             if (existingUser) {
                 throw new errorHandler_1.AppError("User with this email already exists", 409);
             }
+            if (phone) {
+                const existingPhoneUser = await prisma.user.findUnique({ where: { phone } });
+                if (existingPhoneUser) {
+                    throw new errorHandler_1.AppError("User with this phone number already exists", 409);
+                }
+            }
             const hashedPassword = await (0, bcrypt_1.encryptData)(password);
             const newUser = await prisma.user.create({
                 data: {
