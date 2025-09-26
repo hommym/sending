@@ -133,9 +133,9 @@ const validateSendMoney = (req, res, next) => {
     if (typeof recipientAccountNo !== "number") {
         throw new errorHandler_1.AppError("Recipient account number must be a number", 400);
     }
-    if (typeof amount !== "number" || amount <= 0) {
-        throw new errorHandler_1.AppError("Amount must be a positive number", 400);
-    }
+    // if (typeof amount !== "number" || amount <= 0) {
+    //   throw new AppError("Amount must be a positive number", 400);
+    // }
     if (description && typeof description !== "string") {
         throw new errorHandler_1.AppError("Description must be a string", 400);
     }

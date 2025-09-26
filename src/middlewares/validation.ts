@@ -170,9 +170,9 @@ export const validateSendMoney = (req: Request, res: Response, next: NextFunctio
     throw new AppError("Recipient account number must be a number", 400);
   }
 
-  if (typeof amount !== "number" || amount <= 0) {
-    throw new AppError("Amount must be a positive number", 400);
-  }
+  // if (typeof amount !== "number" || amount <= 0) {
+  //   throw new AppError("Amount must be a positive number", 400);
+  // }
 
   if (description && typeof description !== "string") {
     throw new AppError("Description must be a string", 400);
