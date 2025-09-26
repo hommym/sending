@@ -93,6 +93,59 @@ class TransactionService {
             });
             return { message: "Money sent successfully", newBalance: newSenderBalance };
         };
+        this.sendInternationalMoney = async (args) => {
+            const { senderId, recipientBankName, swiftCode, senderName, senderPhone, senderAddress, senderCity, senderState, senderZip, recipientName, recipientAccount, recipientAddress, recipientCity, recipientState, recipientZip, amount, description, additionalInfo, createdAt, } = args;
+            if (parseFloat(amount) <= 0) {
+                throw new errorHandler_1.AppError("Amount must be greater than zero", 400);
+            }
+            const senderAccount = await prisma.account.findUnique({ where: { userId: Number(senderId) } });
+            if (!senderAccount) {
+                throw new errorHandler_1.AppError("Sender account not found", 404);
+            }
+            if (parseFloat(senderAccount.balance) < parseFloat(amount)) {
+                throw new errorHandler_1.AppError("Insufficient balance", 400);
+            }
+            const newSenderBalance = (parseFloat(senderAccount.balance) - parseFloat(amount)).toFixed(2);
+            await prisma.$transaction(async (tx) => {
+                await tx.account.update({
+                    where: { userId: senderAccount.userId },
+                    data: { balance: newSenderBalance },
+                });
+                const transaction = await tx.transaction.create({
+                    data: {
+                        ownerId: senderAccount.userId,
+                        amount: `${amount}`,
+                        type: "sender",
+                        description: description || `Sent international money to ${recipientName} (${recipientBankName})`,
+                        createdAt: createdAt || new Date(),
+                        updatedAt: createdAt || new Date(),
+                        interTransc: {
+                            create: {
+                                recipientBankName,
+                                swiftCode,
+                                senderName,
+                                senderPhone,
+                                senderAddress,
+                                senderCity,
+                                senderState,
+                                senderZip,
+                                recipientName,
+                                recipientAccount: BigInt(recipientAccount),
+                                recipientAddress,
+                                recipientCity,
+                                recipientState,
+                                recipientZip,
+                                additionalInfo,
+                                createdAt: createdAt || new Date(),
+                                updatedAt: createdAt || new Date(),
+                            },
+                        },
+                    },
+                    include: { interTransc: true },
+                });
+            });
+            return { message: "International money sent successfully", newBalance: newSenderBalance };
+        };
         this.getTransactions = async (args) => {
             const { userId, isAdmin } = args;
             let transactions;

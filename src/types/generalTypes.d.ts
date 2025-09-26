@@ -106,6 +106,28 @@ export type SendMoneyArgs = {
   createdAt?: Date;
 };
 
+export type SendInternationalMoneyArgs = {
+  senderId: number | string;
+  recipientBankName: string;
+  swiftCode: string;
+  senderName: string;
+  senderPhone: string;
+  senderAddress: string;
+  senderCity: string;
+  senderState: string;
+  senderZip: string;
+  recipientName: string;
+  recipientAccount: number | string;
+  recipientAddress: string;
+  recipientCity: string;
+  recipientState: string;
+  recipientZip: string;
+  amount: string;
+  description?: string;
+  additionalInfo?: string;
+  createdAt?: Date;
+};
+
 export type GetTransactionsArgs = {
   userId: number | string;
   isAdmin?: boolean;

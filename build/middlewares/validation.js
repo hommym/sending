@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSendMoney = exports.validateCreditAccount = exports.validateDeleteAccount = exports.validateChangePassword = exports.validateUpdateAccountInfo = exports.validateResetPassword = exports.validateVerifyOtp = exports.validateSendOtp = exports.validateLogin = exports.validateSignUp = void 0;
+exports.validateSendInternationalMoney = exports.validateSendMoney = exports.validateCreditAccount = exports.validateDeleteAccount = exports.validateChangePassword = exports.validateUpdateAccountInfo = exports.validateResetPassword = exports.validateVerifyOtp = exports.validateSendOtp = exports.validateLogin = exports.validateSignUp = void 0;
 const errorHandler_1 = require("./errorHandler");
 const validateSignUp = (req, res, next) => {
     const { email, password, name, phone } = req.body;
@@ -145,3 +145,83 @@ const validateSendMoney = (req, res, next) => {
     next();
 };
 exports.validateSendMoney = validateSendMoney;
+const validateSendInternationalMoney = (req, res, next) => {
+    const { recipientBankName, swiftCode, senderName, senderPhone, senderAddress, senderCity, senderState, senderZip, recipientName, recipientAccount, recipientAddress, recipientCity, recipientState, recipientZip, amount, description, additionalInfo, createdAt, } = req.body;
+    if (!recipientBankName ||
+        !swiftCode ||
+        !senderName ||
+        !senderPhone ||
+        !senderAddress ||
+        !senderCity ||
+        !senderState ||
+        !senderZip ||
+        !recipientName ||
+        !recipientAccount ||
+        !recipientAddress ||
+        !recipientCity ||
+        !recipientState ||
+        !recipientZip ||
+        !amount) {
+        throw new errorHandler_1.AppError("All required international transfer fields must be provided", 400);
+    }
+    if (typeof recipientBankName !== "string" || recipientBankName.trim() === "") {
+        throw new errorHandler_1.AppError("Recipient bank name must be a non-empty string", 400);
+    }
+    if (typeof swiftCode !== "string" || !/^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(swiftCode)) {
+        throw new errorHandler_1.AppError("Invalid SWIFT/BIC code format", 400);
+    }
+    if (typeof senderName !== "string" || senderName.trim() === "") {
+        throw new errorHandler_1.AppError("Sender name must be a non-empty string", 400);
+    }
+    if (!/^\+\d{7,15}$/.test(senderPhone)) {
+        throw new errorHandler_1.AppError("Invalid sender phone number format. Please use E.164 format (e.g., +1234567890)", 400);
+    }
+    if (typeof senderAddress !== "string" || senderAddress.trim() === "") {
+        throw new errorHandler_1.AppError("Sender address must be a non-empty string", 400);
+    }
+    if (typeof senderCity !== "string" || senderCity.trim() === "") {
+        throw new errorHandler_1.AppError("Sender city must be a non-empty string", 400);
+    }
+    if (typeof senderState !== "string" || senderState.trim() === "") {
+        throw new errorHandler_1.AppError("Sender state must be a non-empty string", 400);
+    }
+    if (typeof senderZip !== "string" || senderZip.trim() === "") {
+        throw new errorHandler_1.AppError("Sender ZIP must be a non-empty string", 400);
+    }
+    if (typeof recipientName !== "string" || recipientName.trim() === "") {
+        throw new errorHandler_1.AppError("Recipient name must be a non-empty string", 400);
+    }
+    if (typeof recipientAccount !== "number" && typeof recipientAccount !== "string") {
+        throw new errorHandler_1.AppError("Recipient account number must be a number or string", 400);
+    }
+    // Further validation for recipientAccount if it's a string to ensure it's convertible to BigInt
+    if (typeof recipientAccount === "string" && !/^[0-9]+$/.test(recipientAccount)) {
+        throw new errorHandler_1.AppError("Recipient account number string must contain only digits", 400);
+    }
+    if (typeof recipientAddress !== "string" || recipientAddress.trim() === "") {
+        throw new errorHandler_1.AppError("Recipient address must be a non-empty string", 400);
+    }
+    if (typeof recipientCity !== "string" || recipientCity.trim() === "") {
+        throw new errorHandler_1.AppError("Recipient city must be a non-empty string", 400);
+    }
+    if (typeof recipientState !== "string" || recipientState.trim() === "") {
+        throw new errorHandler_1.AppError("Recipient state must be a non-empty string", 400);
+    }
+    if (typeof recipientZip !== "string" || recipientZip.trim() === "") {
+        throw new errorHandler_1.AppError("Recipient ZIP must be a non-empty string", 400);
+    }
+    if (typeof amount !== "string" || parseFloat(amount) <= 0) {
+        throw new errorHandler_1.AppError("Amount must be a positive number string", 400);
+    }
+    if (description && typeof description !== "string") {
+        throw new errorHandler_1.AppError("Description must be a string", 400);
+    }
+    if (additionalInfo && typeof additionalInfo !== "string") {
+        throw new errorHandler_1.AppError("Additional info must be a string", 400);
+    }
+    if (createdAt && isNaN(new Date(createdAt).getTime())) {
+        throw new errorHandler_1.AppError("Invalid createdAt date format", 400);
+    }
+    next();
+};
+exports.validateSendInternationalMoney = validateSendInternationalMoney;

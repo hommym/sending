@@ -1,6 +1,6 @@
 import { database } from "../../db/db";
 import { AppError } from "../../middlewares/errorHandler";
-import { CreditAccountArgs, SendMoneyArgs, GetTransactionsArgs } from "../../types/generalTypes";
+import { CreditAccountArgs, SendMoneyArgs, GetTransactionsArgs, SendInternationalMoneyArgs } from "../../types/generalTypes";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = database as PrismaClient;
@@ -85,7 +85,6 @@ class TransactionService {
         data: { balance: newRecipientBalance },
       });
 
-    
       // Create transaction record for sender
       await tx.transaction.create({
         data: {
@@ -112,6 +111,87 @@ class TransactionService {
     });
 
     return { message: "Money sent successfully", newBalance: newSenderBalance };
+  };
+
+  public sendInternationalMoney = async (args: SendInternationalMoneyArgs) => {
+    const {
+      senderId,
+      recipientBankName,
+      swiftCode,
+      senderName,
+      senderPhone,
+      senderAddress,
+      senderCity,
+      senderState,
+      senderZip,
+      recipientName,
+      recipientAccount,
+      recipientAddress,
+      recipientCity,
+      recipientState,
+      recipientZip,
+      amount,
+      description,
+      additionalInfo,
+      createdAt,
+    } = args;
+
+    if (parseFloat(amount) <= 0) {
+      throw new AppError("Amount must be greater than zero", 400);
+    }
+
+    const senderAccount = await prisma.account.findUnique({ where: { userId: Number(senderId) } });
+    if (!senderAccount) {
+      throw new AppError("Sender account not found", 404);
+    }
+
+    if (parseFloat(senderAccount.balance) < parseFloat(amount)) {
+      throw new AppError("Insufficient balance", 400);
+    }
+
+    const newSenderBalance = (parseFloat(senderAccount.balance) - parseFloat(amount)).toFixed(2);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.account.update({
+        where: { userId: senderAccount.userId },
+        data: { balance: newSenderBalance },
+      });
+
+      const transaction = await tx.transaction.create({
+        data: {
+          ownerId: senderAccount.userId,
+          amount: `${amount}`,
+          type: "sender",
+          description: description || `Sent international money to ${recipientName} (${recipientBankName})`,
+          createdAt: createdAt || new Date(),
+          updatedAt: createdAt || new Date(),
+          interTransc: {
+            create: {
+              recipientBankName,
+              swiftCode,
+              senderName,
+              senderPhone,
+              senderAddress,
+              senderCity,
+              senderState,
+              senderZip,
+              recipientName,
+              recipientAccount: BigInt(recipientAccount),
+              recipientAddress,
+              recipientCity,
+              recipientState,
+              recipientZip,
+              additionalInfo,
+              createdAt: createdAt || new Date(),
+              updatedAt: createdAt || new Date(),
+            },
+          },
+        },
+        include: { interTransc: true },
+      });
+    });
+
+    return { message: "International money sent successfully", newBalance: newSenderBalance };
   };
 
   public getTransactions = async (args: GetTransactionsArgs) => {

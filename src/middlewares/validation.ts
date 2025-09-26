@@ -184,3 +184,111 @@ export const validateSendMoney = (req: Request, res: Response, next: NextFunctio
 
   next();
 };
+
+export const validateSendInternationalMoney = (req: Request, res: Response, next: NextFunction) => {
+  const {
+    recipientBankName,
+    swiftCode,
+    senderName,
+    senderPhone,
+    senderAddress,
+    senderCity,
+    senderState,
+    senderZip,
+    recipientName,
+    recipientAccount,
+    recipientAddress,
+    recipientCity,
+    recipientState,
+    recipientZip,
+    amount,
+    description,
+    additionalInfo,
+    createdAt,
+  } = req.body;
+
+  if (
+    !recipientBankName ||
+    !swiftCode ||
+    !senderName ||
+    !senderPhone ||
+    !senderAddress ||
+    !senderCity ||
+    !senderState ||
+    !senderZip ||
+    !recipientName ||
+    !recipientAccount ||
+    !recipientAddress ||
+    !recipientCity ||
+    !recipientState ||
+    !recipientZip ||
+    !amount
+  ) {
+    throw new AppError("All required international transfer fields must be provided", 400);
+  }
+
+  if (typeof recipientBankName !== "string" || recipientBankName.trim() === "") {
+    throw new AppError("Recipient bank name must be a non-empty string", 400);
+  }
+  if (typeof swiftCode !== "string" || !/^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(swiftCode)) {
+    throw new AppError("Invalid SWIFT/BIC code format", 400);
+  }
+  if (typeof senderName !== "string" || senderName.trim() === "") {
+    throw new AppError("Sender name must be a non-empty string", 400);
+  }
+  if (!/^\+\d{7,15}$/.test(senderPhone)) {
+    throw new AppError("Invalid sender phone number format. Please use E.164 format (e.g., +1234567890)", 400);
+  }
+  if (typeof senderAddress !== "string" || senderAddress.trim() === "") {
+    throw new AppError("Sender address must be a non-empty string", 400);
+  }
+  if (typeof senderCity !== "string" || senderCity.trim() === "") {
+    throw new AppError("Sender city must be a non-empty string", 400);
+  }
+  if (typeof senderState !== "string" || senderState.trim() === "") {
+    throw new AppError("Sender state must be a non-empty string", 400);
+  }
+  if (typeof senderZip !== "string" || senderZip.trim() === "") {
+    throw new AppError("Sender ZIP must be a non-empty string", 400);
+  }
+  if (typeof recipientName !== "string" || recipientName.trim() === "") {
+    throw new AppError("Recipient name must be a non-empty string", 400);
+  }
+  if (typeof recipientAccount !== "number" && typeof recipientAccount !== "string") {
+    throw new AppError("Recipient account number must be a number or string", 400);
+  }
+  // Further validation for recipientAccount if it's a string to ensure it's convertible to BigInt
+  if (typeof recipientAccount === "string" && !/^[0-9]+$/.test(recipientAccount)) {
+    throw new AppError("Recipient account number string must contain only digits", 400);
+  }
+  if (typeof recipientAddress !== "string" || recipientAddress.trim() === "") {
+    throw new AppError("Recipient address must be a non-empty string", 400);
+  }
+  if (typeof recipientCity !== "string" || recipientCity.trim() === "") {
+    throw new AppError("Recipient city must be a non-empty string", 400);
+  }
+  if (typeof recipientState !== "string" || recipientState.trim() === "") {
+    throw new AppError("Recipient state must be a non-empty string", 400);
+  }
+  if (typeof recipientZip !== "string" || recipientZip.trim() === "") {
+    throw new AppError("Recipient ZIP must be a non-empty string", 400);
+  }
+
+  if (typeof amount !== "string" || parseFloat(amount) <= 0) {
+    throw new AppError("Amount must be a positive number string", 400);
+  }
+
+  if (description && typeof description !== "string") {
+    throw new AppError("Description must be a string", 400);
+  }
+
+  if (additionalInfo && typeof additionalInfo !== "string") {
+    throw new AppError("Additional info must be a string", 400);
+  }
+
+  if (createdAt && isNaN(new Date(createdAt).getTime())) {
+    throw new AppError("Invalid createdAt date format", 400);
+  }
+
+  next();
+};

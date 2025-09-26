@@ -43,6 +43,41 @@ exports.transactionRouter.post("/send", jwt_1.verifyAuthToken, validation_1.vali
         next(error);
     }
 });
+// User: Send money to another account (international)
+exports.transactionRouter.post("/international-send", jwt_1.verifyAuthToken, validation_1.validateSendInternationalMoney, async (req, res, next) => {
+    try {
+        const { recipientBankName, swiftCode, senderName, senderPhone, senderAddress, senderCity, senderState, senderZip, recipientName, recipientAccount, recipientAddress, recipientCity, recipientState, recipientZip, amount, description, additionalInfo, createdAt, } = req.body;
+        const senderId = req.userId;
+        if (!senderId) {
+            throw new errorHandler_1.AppError("Unauthorized: User ID not found", 401);
+        }
+        const result = await transactionService_1.transactionService.sendInternationalMoney({
+            senderId,
+            recipientBankName,
+            swiftCode,
+            senderName,
+            senderPhone,
+            senderAddress,
+            senderCity,
+            senderState,
+            senderZip,
+            recipientName,
+            recipientAccount,
+            recipientAddress,
+            recipientCity,
+            recipientState,
+            recipientZip,
+            amount,
+            description,
+            additionalInfo,
+            createdAt,
+        });
+        res.status(200).json(result);
+    }
+    catch (error) {
+        next(error);
+    }
+});
 // User: Get all transactions for the authenticated user
 exports.transactionRouter.get("/history", jwt_1.verifyAuthToken, async (req, res, next) => {
     try {

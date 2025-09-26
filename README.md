@@ -346,7 +346,63 @@ This section outlines endpoints for managing money transactions.
   }
   ```
 
-### 3. Get User Transactions
+### 3. Send International Money
+
+- **URL:** `/api/transactions/international-send`
+- **Method:** `POST`
+- **Description:** Sends money from the authenticated user's account to an account in another bank.
+- **Authentication:** Required (User JWT Token)
+- **Request Body:**
+  ```json
+  {
+    "recipientBankName": "Example Bank International",
+    "swiftCode": "EXAMPLBBXXX",
+    "senderName": "Your Name",
+    "senderPhone": "+1234567890",
+    "senderAddress": "123 Sender St",
+    "senderCity": "Sender City",
+    "senderState": "Sender State",
+    "senderZip": "12345",
+    "recipientName": "Recipient Name",
+    "recipientAccount": "0987654321098765",
+    "recipientAddress": "456 Recipient Ave",
+    "recipientCity": "Recipient City",
+    "recipientState": "Recipient State",
+    "recipientZip": "67890",
+    "amount": "150.00",
+    "description": "International transfer" (optional),
+    "additionalInfo": "For a project payment" (optional),
+    "createdAt": "2023-01-01T12:00:00.000Z" (optional)
+  }
+  ```
+- **Validation:**
+  - `recipientBankName`: Required, non-empty string.
+  - `swiftCode`: Required, valid SWIFT/BIC format (8 or 11 characters, uppercase alphanumeric).
+  - `senderName`: Required, non-empty string.
+  - `senderPhone`: Required, E.164 format (e.g., +1234567890).
+  - `senderAddress`: Required, non-empty string.
+  - `senderCity`: Required, non-empty string.
+  - `senderState`: Required, non-empty string.
+  - `senderZip`: Required, non-empty string.
+  - `recipientName`: Required, non-empty string.
+  - `recipientAccount`: Required, number or string (digits only if string).
+  - `recipientAddress`: Required, non-empty string.
+  - `recipientCity`: Required, non-empty string.
+  - `recipientState`: Required, non-empty string.
+  - `recipientZip`: Required, non-empty string.
+  - `amount`: Required, positive number string.
+  - `description`: Optional, string.
+  - `additionalInfo`: Optional, string.
+  - `createdAt`: Optional, valid ISO 8601 date string.
+- **Response:**
+  ```json
+  {
+    "message": "International money sent successfully",
+    "newBalance": 800.0
+  }
+  ```
+
+### 4. Get User Transactions
 
 - **URL:** `/api/transactions/history`
 - **Method:** `GET`
