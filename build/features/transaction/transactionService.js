@@ -39,7 +39,7 @@ class TransactionService {
             return { message: "Account credited successfully", newBalance };
         };
         this.sendMoney = async (args) => {
-            const { senderId, recipientAccountNo, amount, description } = args;
+            const { senderId, recipientAccountNo, amount, description, createdAt } = args;
             if (parseFloat(amount) <= 0) {
                 throw new errorHandler_1.AppError("Amount must be greater than zero", 400);
             }
@@ -75,6 +75,8 @@ class TransactionService {
                         amount: `${amount}`,
                         type: "sender",
                         description: description || `Sent money to account ${recipientAccountNo}`,
+                        createdAt: createdAt || new Date(),
+                        updatedAt: createdAt || new Date(),
                     },
                 });
                 // Create transaction record for recipient
@@ -84,6 +86,8 @@ class TransactionService {
                         amount: `${amount}`,
                         type: "recipient",
                         description: description || `Received money from account ${senderAccount.accountNo}`,
+                        createdAt: createdAt || new Date(),
+                        updatedAt: createdAt || new Date(),
                     },
                 });
             });

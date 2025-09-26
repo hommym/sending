@@ -126,7 +126,7 @@ const validateCreditAccount = (req, res, next) => {
 };
 exports.validateCreditAccount = validateCreditAccount;
 const validateSendMoney = (req, res, next) => {
-    const { recipientAccountNo, amount, description } = req.body;
+    const { recipientAccountNo, amount, description, createdAt } = req.body;
     if (!recipientAccountNo || !amount) {
         throw new errorHandler_1.AppError("Recipient account number and amount are required", 400);
     }
@@ -138,6 +138,9 @@ const validateSendMoney = (req, res, next) => {
     }
     if (description && typeof description !== "string") {
         throw new errorHandler_1.AppError("Description must be a string", 400);
+    }
+    if (createdAt && isNaN(new Date(createdAt).getTime())) {
+        throw new errorHandler_1.AppError("Invalid createdAt date format", 400);
     }
     next();
 };

@@ -30,7 +30,7 @@ transactionRouter.post("/credit", verifyAuthToken, validateCreditAccount, async 
 // User: Send money to another account
 transactionRouter.post("/send", verifyAuthToken, validateSendMoney, async (req, res, next) => {
   try {
-    const { recipientAccountNo, amount, description } = req.body;
+    const { recipientAccountNo, amount, description ,createdAt} = req.body;
     const senderId = req.userId;
 
     if (!senderId) {
@@ -41,7 +41,7 @@ transactionRouter.post("/send", verifyAuthToken, validateSendMoney, async (req, 
       throw new AppError("Recipient account number and amount are required", 400);
     }
 
-    const result = await transactionService.sendMoney({ senderId, recipientAccountNo, amount, description });
+    const result = await transactionService.sendMoney({ senderId, recipientAccountNo, amount, description ,createdAt});
     res.status(200).json(result);
   } catch (error) {
     next(error);

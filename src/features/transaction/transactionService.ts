@@ -47,7 +47,7 @@ class TransactionService {
   };
 
   public sendMoney = async (args: SendMoneyArgs) => {
-    const { senderId, recipientAccountNo, amount, description } = args;
+    const { senderId, recipientAccountNo, amount, description, createdAt } = args;
 
     if (parseFloat(amount) <= 0) {
       throw new AppError("Amount must be greater than zero", 400);
@@ -85,6 +85,7 @@ class TransactionService {
         data: { balance: newRecipientBalance },
       });
 
+    
       // Create transaction record for sender
       await tx.transaction.create({
         data: {
@@ -92,6 +93,8 @@ class TransactionService {
           amount: `${amount}`,
           type: "sender",
           description: description || `Sent money to account ${recipientAccountNo}`,
+          createdAt: createdAt || new Date(),
+          updatedAt: createdAt || new Date(),
         },
       });
 
@@ -102,6 +105,8 @@ class TransactionService {
           amount: `${amount}`,
           type: "recipient",
           description: description || `Received money from account ${senderAccount.accountNo}`,
+          createdAt: createdAt || new Date(),
+          updatedAt: createdAt || new Date(),
         },
       });
     });

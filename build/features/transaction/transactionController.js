@@ -28,7 +28,7 @@ exports.transactionRouter.post("/credit", jwt_1.verifyAuthToken, validation_1.va
 // User: Send money to another account
 exports.transactionRouter.post("/send", jwt_1.verifyAuthToken, validation_1.validateSendMoney, async (req, res, next) => {
     try {
-        const { recipientAccountNo, amount, description } = req.body;
+        const { recipientAccountNo, amount, description, createdAt } = req.body;
         const senderId = req.userId;
         if (!senderId) {
             throw new errorHandler_1.AppError("Unauthorized: User ID not found", 401);
@@ -36,7 +36,7 @@ exports.transactionRouter.post("/send", jwt_1.verifyAuthToken, validation_1.vali
         if (!recipientAccountNo || !amount) {
             throw new errorHandler_1.AppError("Recipient account number and amount are required", 400);
         }
-        const result = await transactionService_1.transactionService.sendMoney({ senderId, recipientAccountNo, amount, description });
+        const result = await transactionService_1.transactionService.sendMoney({ senderId, recipientAccountNo, amount, description, createdAt });
         res.status(200).json(result);
     }
     catch (error) {

@@ -103,6 +103,7 @@ export type SendMoneyArgs = {
   recipientAccountNo: number;
   amount: string;
   description?: string;
+  createdAt?: Date;
 };
 
 export type GetTransactionsArgs = {
