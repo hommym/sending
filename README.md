@@ -419,7 +419,27 @@ This section outlines endpoints for managing money transactions.
         "type": "recipient",
         "ownerId": 1,
         "createdAt": "2023-01-01T12:00:00.000Z",
-        "updatedAt": "2023-01-01T12:00:00.000Z"
+        "updatedAt": "2023-01-01T12:00:00.000Z",
+        "interTransc": {
+          "refId": 1,
+          "recipientBankName": "Example Bank International",
+          "swiftCode": "EXAMPLBBXXX",
+          "senderName": "Your Name",
+          "senderPhone": "+1234567890",
+          "senderAddress": "123 Sender St",
+          "senderCity": "Sender City",
+          "senderState": "Sender State",
+          "senderZip": "12345",
+          "recipientName": "Recipient Name",
+          "recipientAccount": "0987654321098765",
+          "recipientAddress": "456 Recipient Ave",
+          "recipientCity": "Recipient City",
+          "recipientState": "Recipient State",
+          "recipientZip": "67890",
+          "additionalInfo": "For a project payment",
+          "createdAt": "2023-01-01T12:00:00.000Z",
+          "updatedAt": "2023-01-01T12:00:00.000Z"
+        }
       }
     ]
   }
@@ -442,7 +462,27 @@ This section outlines endpoints for managing money transactions.
         "type": "recipient",
         "ownerId": 1,
         "createdAt": "2023-01-01T12:00:00.000Z",
-        "updatedAt": "2023-01-01T12:00:00.000Z"
+        "updatedAt": "2023-01-01T12:00:00.000Z",
+        "interTransc": {
+          "refId": 1,
+          "recipientBankName": "Example Bank International",
+          "swiftCode": "EXAMPLBBXXX",
+          "senderName": "Your Name",
+          "senderPhone": "+1234567890",
+          "senderAddress": "123 Sender St",
+          "senderCity": "Sender City",
+          "senderState": "Sender State",
+          "senderZip": "12345",
+          "recipientName": "Recipient Name",
+          "recipientAccount": "0987654321098765",
+          "recipientAddress": "456 Recipient Ave",
+          "recipientCity": "Recipient City",
+          "recipientState": "Recipient State",
+          "recipientZip": "67890",
+          "additionalInfo": "For a project payment",
+          "createdAt": "2023-01-01T12:00:00.000Z",
+          "updatedAt": "2023-01-01T12:00:00.000Z"
+        }
       }
       // ... more transactions
     ]

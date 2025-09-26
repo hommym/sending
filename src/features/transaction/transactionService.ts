@@ -201,14 +201,20 @@ class TransactionService {
     if (isAdmin) {
       transactions = await prisma.transaction.findMany({
         orderBy: { createdAt: "desc" },
+        include: { interTransc: true },
       });
     } else {
       transactions = await prisma.transaction.findMany({
         where: { ownerId: Number(userId) },
         orderBy: { createdAt: "desc" },
+        include: { interTransc: true },
       });
     }
-
+    transactions.forEach((transaction) => {
+      if (transaction.interTransc) {
+        transaction.interTransc.recipientAccount = String(transaction.interTransc.recipientAccount) as any;
+      }
+    });
     return { transactions };
   };
 }
