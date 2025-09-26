@@ -71,6 +71,29 @@ model Transaction {
   ownerId      Int
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
+  interTransc  Inter_Transc_Info?
   user User @relation(fields: [ownerId], references: [id])
+  
+}
+
+model Inter_Transc_Info{
+ refId                Int       @id @default(autoincrement()) 
+ recipientBankName    String
+ swiftCode            String
+ senderName           String
+ senderPhone          String
+ senderAddress        String
+ senderCity           String
+ senderState          String
+ senderZip            String
+ recipientName        String
+ recipientAccount     BigInt
+ recipientAddress     String
+ recipientCity        String
+ recipientState       String
+ recipientZip         String
+ additionalInfo       String?
+ createdAt      DateTime    @default(now())
+ updatedAt      DateTime    @updatedAt 
+ transc         Transaction  @relation(fields: [refId], references: [ref])
 }
