@@ -329,13 +329,15 @@ This section outlines endpoints for managing money transactions.
   {
     "recipientAccountNo": 1234567890,
     "amount": 50.00,
-    "description": "For groceries" (optional)
+    "description": "For groceries" (optional),
+    "createdAt": "2023-01-01T12:00:00.000Z" (optional)
   }
   ```
 - **Validation:**
   - `recipientAccountNo`: Required, number.
   - `amount`: Required, positive number.
   - `description`: Optional, string.
+  - `createdAt`: Optional, valid ISO 8601 date string.
 - **Response:**
   ```json
   {
