@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.emailService = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const nodemailer_1 = __importDefault(require("nodemailer"));
+const axios_1 = __importDefault(require("axios"));
 const errorHandler_1 = require("../middlewares/errorHandler");
 class EmailService {
     constructor() {
@@ -32,43 +32,32 @@ class EmailService {
     `);
             await this.sendWithRetry({ to: recipientEmail, subject, text, html });
         };
-        const host = process.env.SMTP_HOST;
-        const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined;
-        const user = process.env.SMTP_USER;
-        const pass = process.env.SMTP_PASS;
         const from = process.env.MAIL_FROM;
         const retries = process.env.EMAIL_MAX_RETRIES ? Number(process.env.EMAIL_MAX_RETRIES) : 3;
-        const secure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : false;
-        if (!host)
-            throw new errorHandler_1.AppError("No value found for env var: SMTP_HOST", 500);
-        if (!port)
-            throw new errorHandler_1.AppError("No value found for env var: SMTP_PORT", 500);
-        if (!user)
-            throw new errorHandler_1.AppError("No value found for env var: SMTP_USER", 500);
-        if (!pass)
-            throw new errorHandler_1.AppError("No value found for env var: SMTP_PASS", 500);
+        const resend = process.env.RESEND_API_KEY;
         if (!from)
             throw new errorHandler_1.AppError("No value found for env var: MAIL_FROM", 500);
-        this.transporter = nodemailer_1.default.createTransport({
-            host,
-            port,
-            secure,
-            auth: { user, pass },
-        });
+        if (!resend)
+            throw new errorHandler_1.AppError("No value found for env var: RESEND_API_KEY", 500);
         this.fromAddress = from;
         this.maxRetries = Number.isFinite(retries) && retries > 0 ? retries : 3;
         this.companyName = process.env.COMPANY_NAME || "Aceldaa Bank";
+        this.resendApiKey = resend;
     }
     async sendWithRetry(params) {
         let lastError = undefined;
         for (let attempt = 1; attempt <= this.maxRetries; attempt += 1) {
             try {
-                await this.transporter.sendMail({
+                await axios_1.default.post("https://api.resend.com/emails", {
                     from: this.fromAddress,
                     to: params.to,
                     subject: params.subject,
-                    text: params.text,
                     html: params.html,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${this.resendApiKey}`,
+                        "Content-Type": "application/json",
+                    },
                 });
                 return; // success
             }
