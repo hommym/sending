@@ -119,8 +119,8 @@ class TransactionService {
                         amount: `${amount}`,
                         type: "sender",
                         description: description || `Sent international money to ${recipientName} (${recipientBankName})`,
-                        createdAt: createdAt ? new Date(createdAt) : new Date(),
-                        updatedAt: createdAt ? new Date(createdAt) : new Date(),
+                        createdAt: createdAt ? createdAt : new Date(),
+                        updatedAt: createdAt ? createdAt : new Date(),
                         interTransc: {
                             create: {
                                 recipientBankName,
