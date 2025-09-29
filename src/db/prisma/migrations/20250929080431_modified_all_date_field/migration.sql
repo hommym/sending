@@ -10,4 +10,4 @@ ALTER TABLE `Transaction` MODIFY `createdAt` DATE NOT NULL,
     MODIFY `updatedAt` DATE NOT NULL;
 
 -- AddForeignKey
-ALTER TABLE `Inter_Transc_Info` ADD CONSTRAINT `Inter_Transc_Info_refId_fkey` FOREIGN KEY (`refId`) REFERENCES `Transaction`(`ref`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Inter_Transc_Info` ADD CONSTRAINT `Inter_Transc_Info_refId_fkey` FOREIGN KEY (`refId`) REFERENCES `Transaction`(`ref`) ON DELETE CASCADE ON UPDATE CASCADE;
