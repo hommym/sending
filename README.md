@@ -436,20 +436,21 @@ To configure the email service with Resend, the following environment variable i
 
 ### 4. Update Transaction (Admin Only)
 
-- **URL:** `/api/transactions/admin/update/:id`
+- **URL:** `/api/transactions/admin/update`
 - **Method:** `PATCH`
 - **Description:** Admin-only endpoint to update an existing transaction's amount, description, or createdAt date.
 - **Authentication:** Required (Admin JWT Token)
 - **Request Body:**
   ```json
   {
+    "transactionId":1 (required)
     "amount": 200.00 (optional),
     "description": "Updated description" (optional),
     "createdAt": "2023-01-02T10:30:00.000Z" (optional)
   }
   ```
 - **Validation:**
-  - `transactionId`: Required (from URL params), number or string.
+  - `transactionId`: Required, number.
   - `amount`: Optional, positive number.
   - `description`: Optional, string.
   - `createdAt`: Optional, valid ISO 8601 date string.

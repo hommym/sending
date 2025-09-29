@@ -138,7 +138,7 @@ transactionRouter.get("/admin/history", verifyAuthToken, async (req, res, next) 
 });
 
 // Admin only: Update a transaction
-transactionRouter.patch("/admin/update/:id", verifyAuthToken, validateUpdateTransaction, async (req, res, next) => {
+transactionRouter.patch("/admin/update/", verifyAuthToken, validateUpdateTransaction, async (req, res, next) => {
   try {
     const isAdmin = req.isAdmin;
 
@@ -146,8 +146,8 @@ transactionRouter.patch("/admin/update/:id", verifyAuthToken, validateUpdateTran
       throw new AppError("Unauthorized: Admins only", 403);
     }
 
-    const transactionId = req.params.id;
-    const { amount, description, createdAt } = req.body;
+    
+    const { amount, description, createdAt, transactionId } = req.body;
 
     const result = await transactionService.updateTransaction({ transactionId, amount, description, createdAt });
     res.status(200).json(result);

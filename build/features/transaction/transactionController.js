@@ -108,14 +108,13 @@ exports.transactionRouter.get("/admin/history", jwt_1.verifyAuthToken, async (re
     }
 });
 // Admin only: Update a transaction
-exports.transactionRouter.patch("/admin/update/:id", jwt_1.verifyAuthToken, validation_1.validateUpdateTransaction, async (req, res, next) => {
+exports.transactionRouter.patch("/admin/update/", jwt_1.verifyAuthToken, validation_1.validateUpdateTransaction, async (req, res, next) => {
     try {
         const isAdmin = req.isAdmin;
         if (!isAdmin) {
             throw new errorHandler_1.AppError("Unauthorized: Admins only", 403);
         }
-        const transactionId = req.params.id;
-        const { amount, description, createdAt } = req.body;
+        const { amount, description, createdAt, transactionId } = req.body;
         const result = await transactionService_1.transactionService.updateTransaction({ transactionId, amount, description, createdAt });
         res.status(200).json(result);
     }
