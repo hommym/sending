@@ -7,7 +7,7 @@ const prisma = db_1.database;
 class TransactionService {
     constructor() {
         this.creditAccount = async (args) => {
-            const { recipientId, amount, recipientIsAdmin } = args;
+            const { recipientId, amount, recipientIsAdmin, createdAt } = args;
             let recipientEntity;
             if (recipientIsAdmin) {
                 recipientEntity = await prisma.admin.findUnique({ where: { id: Number(recipientId) } });
@@ -34,6 +34,8 @@ class TransactionService {
                     amount: `${amount}`,
                     type: "recipient",
                     description: `Account credited by admin`,
+                    createdAt: createdAt || new Date(),
+                    updatedAt: createdAt || new Date(),
                 },
             });
             return { message: "Account credited successfully", newBalance };
@@ -168,6 +170,30 @@ class TransactionService {
                 }
             });
             return { transactions };
+        };
+        this.updateTransaction = async (args) => {
+            const { transactionId, amount, description, createdAt } = args;
+            const transaction = await prisma.transaction.findUnique({ where: { ref: Number(transactionId) } });
+            if (!transaction) {
+                throw new errorHandler_1.AppError("Transaction not found", 404);
+            }
+            const dataToUpdate = {
+                updatedAt: new Date(),
+            };
+            if (amount !== undefined) {
+                dataToUpdate.amount = `${amount}`;
+            }
+            if (description !== undefined) {
+                dataToUpdate.description = description;
+            }
+            if (createdAt !== undefined) {
+                dataToUpdate.createdAt = createdAt;
+            }
+            await prisma.transaction.update({
+                where: { ref: Number(transactionId) },
+                data: dataToUpdate,
+            });
+            return { message: "Transaction updated successfully" };
         };
     }
 }

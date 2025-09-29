@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSendInternationalMoney = exports.validateSendMoney = exports.validateCreditAccount = exports.validateDeleteAccount = exports.validateChangePassword = exports.validateUpdateAccountInfo = exports.validateResetPassword = exports.validateVerifyOtp = exports.validateSendOtp = exports.validateLogin = exports.validateSignUp = void 0;
+exports.validateUpdateTransaction = exports.validateSendInternationalMoney = exports.validateSendMoney = exports.validateCreditAccount = exports.validateDeleteAccountByAdmin = exports.validateDeleteAccount = exports.validateChangePassword = exports.validateUpdateAccountInfo = exports.validateResetPassword = exports.validateVerifyOtp = exports.validateSendOtp = exports.validateLogin = exports.validateSignUp = void 0;
 const errorHandler_1 = require("./errorHandler");
 const validateSignUp = (req, res, next) => {
     const { email, password, name, phone } = req.body;
@@ -108,6 +108,17 @@ const validateDeleteAccount = (req, res, next) => {
     next();
 };
 exports.validateDeleteAccount = validateDeleteAccount;
+const validateDeleteAccountByAdmin = (req, res, next) => {
+    const { accountId } = req.body;
+    if (!accountId) {
+        throw new errorHandler_1.AppError("Account ID is required", 400);
+    }
+    if (typeof accountId !== "number" && typeof accountId !== "string") {
+        throw new errorHandler_1.AppError("Account ID must be a number or string", 400);
+    }
+    next();
+};
+exports.validateDeleteAccountByAdmin = validateDeleteAccountByAdmin;
 const validateCreditAccount = (req, res, next) => {
     const { recipientId, amount, recipientIsAdmin } = req.body;
     if (!recipientId || !amount) {
@@ -225,3 +236,26 @@ const validateSendInternationalMoney = (req, res, next) => {
     next();
 };
 exports.validateSendInternationalMoney = validateSendInternationalMoney;
+const validateUpdateTransaction = (req, res, next) => {
+    const { transactionId, amount, description, createdAt } = req.body;
+    if (!transactionId) {
+        throw new errorHandler_1.AppError("Transaction ID is required", 400);
+    }
+    if (typeof transactionId !== "number" && typeof transactionId !== "string") {
+        throw new errorHandler_1.AppError("Transaction ID must be a number or string", 400);
+    }
+    if (amount !== undefined && (typeof amount !== "string" || parseFloat(amount) <= 0)) {
+        throw new errorHandler_1.AppError("Amount must be a positive number string", 400);
+    }
+    if (description !== undefined && typeof description !== "string") {
+        throw new errorHandler_1.AppError("Description must be a string", 400);
+    }
+    if (createdAt !== undefined && isNaN(new Date(createdAt).getTime())) {
+        throw new errorHandler_1.AppError("Invalid createdAt date format", 400);
+    }
+    if (amount === undefined && description === undefined && createdAt === undefined) {
+        throw new errorHandler_1.AppError("At least one field (amount, description, or createdAt) must be provided for update", 400);
+    }
+    next();
+};
+exports.validateUpdateTransaction = validateUpdateTransaction;

@@ -69,8 +69,8 @@ model Transaction {
   description  String?
   type         TransactionType    @default(sender)
   ownerId      Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime    @db.Date
+  updatedAt    DateTime    @db.Date
   interTransc  Inter_Transc_Info?
   user User @relation(fields: [ownerId], references: [id])
   
@@ -93,7 +93,7 @@ model Inter_Transc_Info{
  recipientState       String
  recipientZip         String
  additionalInfo       String?
- createdAt      DateTime    @default(now())
- updatedAt      DateTime    @updatedAt 
+ createdAt      DateTime     @db.Date
+ updatedAt      DateTime     @db.Date
  transc         Transaction  @relation(fields: [refId], references: [ref])
 }

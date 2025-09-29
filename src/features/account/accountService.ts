@@ -1,7 +1,7 @@
 import { database } from "../../db/db";
 import { AppError } from "../../middlewares/errorHandler";
 import { encryptData, verifyEncryptedData } from "../../utils/bcrypt";
-import { AccountChangePasswordArgs, AccountDeleteArgs, AccountUpdateInfoArgs } from "../../types/generalTypes";
+import { AccountChangePasswordArgs, AccountDeleteArgs, AccountUpdateInfoArgs, DeleteAccountByAdminArgs } from "../../types/generalTypes";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = database as PrismaClient;
@@ -156,6 +156,29 @@ class AccountService {
     });
 
     return { users: usersWithSerializedAccountNo, admins };
+  };
+
+  public deleteUserAccountByAdmin = async (args: DeleteAccountByAdminArgs) => {
+    const { accountId, isAdmin } = args;
+
+    let entity;
+    if (isAdmin) {
+      entity = await prisma.admin.findUnique({ where: { id: Number(accountId) } });
+    } else {
+      entity = await prisma.user.findUnique({ where: { id: Number(accountId) } });
+    }
+
+    if (!entity) {
+      throw new AppError(isAdmin ? "Admin not found" : "User not found", 404);
+    }
+
+    if (isAdmin) {
+      await prisma.admin.delete({ where: { id: Number(accountId) } });
+    } else {
+      await prisma.user.delete({ where: { id: Number(accountId) } });
+    }
+
+    return { message: "Account deleted successfully by admin" };
   };
 }
 

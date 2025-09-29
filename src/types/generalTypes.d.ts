@@ -96,6 +96,7 @@ export type CreditAccountArgs = {
   recipientId: number | string;
   amount: string;
   recipientIsAdmin?: boolean;
+  createdAt?: Date;
 };
 
 export type SendMoneyArgs = {
@@ -158,4 +159,16 @@ export type ArkeselVerifyResponse = {
   code: string;
   ussd_code: string;
   message: string;
+};
+
+export type UpdateTransactionArgs = {
+  transactionId: number | string;
+  amount?: string;
+  description?: string;
+  createdAt?: Date;
+};
+
+export type DeleteAccountByAdminArgs = {
+  accountId: number | string;
+  isAdmin?: boolean;
 };

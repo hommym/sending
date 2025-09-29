@@ -2,7 +2,7 @@ import { Router } from "express";
 import { accountService } from "./accountService";
 import { verifyAuthToken } from "../../utils/jwt";
 import { AppError } from "../../middlewares/errorHandler";
-import { validateUpdateAccountInfo, validateChangePassword, validateDeleteAccount } from "../../middlewares/validation";
+import { validateUpdateAccountInfo, validateChangePassword, validateDeleteAccount, validateDeleteAccountByAdmin } from "../../middlewares/validation";
 
 export const accountRouter = Router();
 
@@ -82,6 +82,24 @@ accountRouter.get("/admin/all-accounts", verifyAuthToken, async (req, res, next)
     }
 
     const result = await accountService.getAllAccounts();
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Admin only: Delete a user or admin account by ID
+accountRouter.delete("/admin/delete", verifyAuthToken, validateDeleteAccountByAdmin, async (req, res, next) => {
+  try {
+    const isAdmin = req.isAdmin;
+
+    if (!isAdmin) {
+      throw new AppError("Unauthorized: Admins only", 403);
+    }
+
+    const { accountId, isAdmin: targetIsAdmin } = req.body;
+
+    const result = await accountService.deleteUserAccountByAdmin({ accountId, isAdmin: targetIsAdmin });
     res.status(200).json(result);
   } catch (error) {
     next(error);

@@ -1,13 +1,13 @@
 import { database } from "../../db/db";
 import { AppError } from "../../middlewares/errorHandler";
-import { CreditAccountArgs, SendMoneyArgs, GetTransactionsArgs, SendInternationalMoneyArgs } from "../../types/generalTypes";
+import { CreditAccountArgs, SendMoneyArgs, GetTransactionsArgs, SendInternationalMoneyArgs, UpdateTransactionArgs } from "../../types/generalTypes";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = database as PrismaClient;
 
 class TransactionService {
   public creditAccount = async (args: CreditAccountArgs) => {
-    const { recipientId, amount, recipientIsAdmin } = args;
+    const { recipientId, amount, recipientIsAdmin, createdAt } = args;
 
     let recipientEntity;
     if (recipientIsAdmin) {
@@ -40,6 +40,8 @@ class TransactionService {
         amount: `${amount}`,
         type: "recipient",
         description: `Account credited by admin`,
+        createdAt: createdAt || new Date(),
+        updatedAt: createdAt || new Date(),
       },
     });
 
@@ -216,6 +218,36 @@ class TransactionService {
       }
     });
     return { transactions };
+  };
+
+  public updateTransaction = async (args: UpdateTransactionArgs) => {
+    const { transactionId, amount, description, createdAt } = args;
+
+    const transaction = await prisma.transaction.findUnique({ where: { ref: Number(transactionId) } });
+    if (!transaction) {
+      throw new AppError("Transaction not found", 404);
+    }
+
+    const dataToUpdate: { amount?: string; description?: string; createdAt?: Date; updatedAt: Date } = {
+      updatedAt: new Date(),
+    };
+
+    if (amount !== undefined) {
+      dataToUpdate.amount = `${amount}`;
+    }
+    if (description !== undefined) {
+      dataToUpdate.description = description;
+    }
+    if (createdAt !== undefined) {
+      dataToUpdate.createdAt = createdAt;
+    }
+
+    await prisma.transaction.update({
+      where: { ref: Number(transactionId) },
+      data: dataToUpdate,
+    });
+
+    return { message: "Transaction updated successfully" };
   };
 }
 

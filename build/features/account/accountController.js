@@ -79,3 +79,18 @@ exports.accountRouter.get("/admin/all-accounts", jwt_1.verifyAuthToken, async (r
         next(error);
     }
 });
+// Admin only: Delete a user or admin account by ID
+exports.accountRouter.delete("/admin/delete", jwt_1.verifyAuthToken, validation_1.validateDeleteAccountByAdmin, async (req, res, next) => {
+    try {
+        const isAdmin = req.isAdmin;
+        if (!isAdmin) {
+            throw new errorHandler_1.AppError("Unauthorized: Admins only", 403);
+        }
+        const { accountId, isAdmin: targetIsAdmin } = req.body;
+        const result = await accountService_1.accountService.deleteUserAccountByAdmin({ accountId, isAdmin: targetIsAdmin });
+        res.status(200).json(result);
+    }
+    catch (error) {
+        next(error);
+    }
+});

@@ -137,6 +137,20 @@ export const validateDeleteAccount = (req: Request, res: Response, next: NextFun
   next();
 };
 
+export const validateDeleteAccountByAdmin = (req: Request, res: Response, next: NextFunction) => {
+  const { accountId } = req.body;
+
+  if (!accountId) {
+    throw new AppError("Account ID is required", 400);
+  }
+
+  if (typeof accountId !== "number" && typeof accountId !== "string") {
+    throw new AppError("Account ID must be a number or string", 400);
+  }
+
+  next();
+};
+
 export const validateCreditAccount = (req: Request, res: Response, next: NextFunction) => {
   const { recipientId, amount, recipientIsAdmin } = req.body;
 
@@ -288,6 +302,36 @@ export const validateSendInternationalMoney = (req: Request, res: Response, next
 
   if (createdAt && isNaN(new Date(createdAt).getTime())) {
     throw new AppError("Invalid createdAt date format", 400);
+  }
+
+  next();
+};
+
+export const validateUpdateTransaction = (req: Request, res: Response, next: NextFunction) => {
+  const { transactionId, amount, description, createdAt } = req.body;
+
+  if (!transactionId) {
+    throw new AppError("Transaction ID is required", 400);
+  }
+
+  if (typeof transactionId !== "number" && typeof transactionId !== "string") {
+    throw new AppError("Transaction ID must be a number or string", 400);
+  }
+
+  if (amount !== undefined && (typeof amount !== "string" || parseFloat(amount) <= 0)) {
+    throw new AppError("Amount must be a positive number string", 400);
+  }
+
+  if (description !== undefined && typeof description !== "string") {
+    throw new AppError("Description must be a string", 400);
+  }
+
+  if (createdAt !== undefined && isNaN(new Date(createdAt).getTime())) {
+    throw new AppError("Invalid createdAt date format", 400);
+  }
+
+  if (amount === undefined && description === undefined && createdAt === undefined) {
+    throw new AppError("At least one field (amount, description, or createdAt) must be provided for update", 400);
   }
 
   next();

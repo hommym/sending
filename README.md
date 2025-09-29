@@ -288,9 +288,39 @@ This section details endpoints for managing user and admin accounts.
   }
   ```
 
+### 6. Delete Account by Admin (Admin Only)
+
+- **URL:** `/api/account/admin/delete`
+- **Method:** `DELETE`
+- **Description:** Admin-only endpoint to delete a user's or admin's account by providing the account ID.
+- **Authentication:** Required (Admin JWT Token)
+- **Request Body:**
+  ```json
+  {
+    "accountId": 1,
+    "isAdmin": false (optional)
+  }
+  ```
+- **Validation:**
+  - `accountId`: Required, number or string.
+  - `isAdmin`: Optional, boolean.
+- **Response:**
+  ```json
+  {
+    "message": "Account deleted successfully by admin"
+  }
+  ```
+
 ## Transaction Service
 
 This section outlines endpoints for managing money transactions.
+
+### Environment Variables
+
+To configure the email service with Resend, the following environment variable is required:
+
+- `RESEND_API_KEY`: Your API key for the Resend email service.
+- `MAIL_FROM`: The email address used as the sender for all outgoing emails.
 
 ### 1. Credit Account (Admin Only)
 
@@ -303,13 +333,15 @@ This section outlines endpoints for managing money transactions.
   {
     "recipientId": 1,
     "amount": 100.00,
-    "recipientIsAdmin": false (optional)
+    "recipientIsAdmin": false (optional),
+    "createdAt": "2023-01-01T12:00:00.000Z" (optional)
   }
   ```
 - **Validation:**
   - `recipientId`: Required, number or string.
   - `amount`: Required, positive number.
   - `recipientIsAdmin`: Optional, boolean.
+  - `createdAt`: Optional, valid ISO 8601 date string.
 - **Response:**
   ```json
   {
@@ -402,7 +434,34 @@ This section outlines endpoints for managing money transactions.
   }
   ```
 
-### 4. Get User Transactions
+### 4. Update Transaction (Admin Only)
+
+- **URL:** `/api/transactions/admin/update/:id`
+- **Method:** `PATCH`
+- **Description:** Admin-only endpoint to update an existing transaction's amount, description, or createdAt date.
+- **Authentication:** Required (Admin JWT Token)
+- **Request Body:**
+  ```json
+  {
+    "amount": 200.00 (optional),
+    "description": "Updated description" (optional),
+    "createdAt": "2023-01-02T10:30:00.000Z" (optional)
+  }
+  ```
+- **Validation:**
+  - `transactionId`: Required (from URL params), number or string.
+  - `amount`: Optional, positive number.
+  - `description`: Optional, string.
+  - `createdAt`: Optional, valid ISO 8601 date string.
+  - At least one of `amount`, `description`, or `createdAt` must be provided.
+- **Response:**
+  ```json
+  {
+    "message": "Transaction updated successfully"
+  }
+  ```
+
+### 5. Get User Transactions
 
 - **URL:** `/api/transactions/history`
 - **Method:** `GET`
