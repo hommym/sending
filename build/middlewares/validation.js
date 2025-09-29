@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateUpdateTransaction = exports.validateSendInternationalMoney = exports.validateSendMoney = exports.validateCreditAccount = exports.validateDeleteAccountByAdmin = exports.validateDeleteAccount = exports.validateChangePassword = exports.validateUpdateAccountInfo = exports.validateResetPassword = exports.validateVerifyOtp = exports.validateSendOtp = exports.validateLogin = exports.validateSignUp = void 0;
+exports.validateUpdateTransaction = exports.validateSendInternationalMoney = exports.validateSendMoney = exports.validateCreditAccount = exports.validateChangePassword = exports.validateUpdateAccountInfo = exports.validateResetPassword = exports.validateVerifyOtp = exports.validateSendOtp = exports.validateLogin = exports.validateSignUp = void 0;
 const errorHandler_1 = require("./errorHandler");
 const validateSignUp = (req, res, next) => {
     const { email, password, name, phone } = req.body;
@@ -100,25 +100,6 @@ const validateChangePassword = (req, res, next) => {
     next();
 };
 exports.validateChangePassword = validateChangePassword;
-const validateDeleteAccount = (req, res, next) => {
-    const { password } = req.body;
-    if (!password) {
-        throw new errorHandler_1.AppError("Password is required to delete account", 400);
-    }
-    next();
-};
-exports.validateDeleteAccount = validateDeleteAccount;
-const validateDeleteAccountByAdmin = (req, res, next) => {
-    const { accountId } = req.body;
-    if (!accountId) {
-        throw new errorHandler_1.AppError("Account ID is required", 400);
-    }
-    if (typeof accountId !== "number" && typeof accountId !== "string") {
-        throw new errorHandler_1.AppError("Account ID must be a number or string", 400);
-    }
-    next();
-};
-exports.validateDeleteAccountByAdmin = validateDeleteAccountByAdmin;
 const validateCreditAccount = (req, res, next) => {
     const { recipientId, amount, recipientIsAdmin } = req.body;
     if (!recipientId || !amount) {

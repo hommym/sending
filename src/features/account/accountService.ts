@@ -116,26 +116,15 @@ class AccountService {
   };
 
   public deleteAccount = async (args: AccountDeleteArgs) => {
-    const { userId, password, isAdmin } = args;
+    const { userId } = args;
 
-    let entity;
-    if (isAdmin) {
-      entity = await prisma.admin.findUnique({ where: { id: Number(userId) } });
-    } else {
-      entity = await prisma.user.findUnique({ where: { id: Number(userId) } });
-    }
+    let entity = await prisma.user.findUnique({ where: { id: Number(userId) } });
 
     if (!entity) {
-      throw new AppError(isAdmin ? "Admin not found" : "User not found", 404);
+      throw new AppError("User not found", 404);
     }
 
-    await verifyEncryptedData(password, entity.password);
-
-    if (isAdmin) {
-      await prisma.admin.delete({ where: { id: Number(userId) } });
-    } else {
-      await prisma.user.delete({ where: { id: Number(userId) } });
-    }
+    await prisma.user.delete({ where: { id: Number(userId) } });
 
     return { message: "Account deleted successfully" };
   };
@@ -162,7 +151,7 @@ class AccountService {
     const { accountId } = args;
 
     let entity = await prisma.user.findUnique({ where: { id: Number(accountId) } });
-    
+
     if (!entity) {
       throw new AppError("User not found", 404);
     }

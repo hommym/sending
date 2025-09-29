@@ -127,29 +127,8 @@ export const validateChangePassword = (req: Request, res: Response, next: NextFu
   next();
 };
 
-export const validateDeleteAccount = (req: Request, res: Response, next: NextFunction) => {
-  const { password } = req.body;
 
-  if (!password) {
-    throw new AppError("Password is required to delete account", 400);
-  }
 
-  next();
-};
-
-export const validateDeleteAccountByAdmin = (req: Request, res: Response, next: NextFunction) => {
-  const { accountId } = req.body;
-
-  if (!accountId) {
-    throw new AppError("Account ID is required", 400);
-  }
-
-  if (typeof accountId !== "number" && typeof accountId !== "string") {
-    throw new AppError("Account ID must be a number or string", 400);
-  }
-
-  next();
-};
 
 export const validateCreditAccount = (req: Request, res: Response, next: NextFunction) => {
   const { recipientId, amount, recipientIsAdmin } = req.body;

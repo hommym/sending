@@ -105,24 +105,12 @@ class AccountService {
             return { account: entity };
         };
         this.deleteAccount = async (args) => {
-            const { userId, password, isAdmin } = args;
-            let entity;
-            if (isAdmin) {
-                entity = await prisma.admin.findUnique({ where: { id: Number(userId) } });
-            }
-            else {
-                entity = await prisma.user.findUnique({ where: { id: Number(userId) } });
-            }
+            const { userId } = args;
+            let entity = await prisma.user.findUnique({ where: { id: Number(userId) } });
             if (!entity) {
-                throw new errorHandler_1.AppError(isAdmin ? "Admin not found" : "User not found", 404);
+                throw new errorHandler_1.AppError("User not found", 404);
             }
-            await (0, bcrypt_1.verifyEncryptedData)(password, entity.password);
-            if (isAdmin) {
-                await prisma.admin.delete({ where: { id: Number(userId) } });
-            }
-            else {
-                await prisma.user.delete({ where: { id: Number(userId) } });
-            }
+            await prisma.user.delete({ where: { id: Number(userId) } });
             return { message: "Account deleted successfully" };
         };
         this.getAllAccounts = async () => {

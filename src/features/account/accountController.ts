@@ -2,7 +2,7 @@ import { Router } from "express";
 import { accountService } from "./accountService";
 import { verifyAuthToken } from "../../utils/jwt";
 import { AppError } from "../../middlewares/errorHandler";
-import { validateUpdateAccountInfo, validateChangePassword, validateDeleteAccount, validateDeleteAccountByAdmin } from "../../middlewares/validation";
+import { validateUpdateAccountInfo, validateChangePassword } from "../../middlewares/validation";
 
 export const accountRouter = Router();
 
@@ -56,9 +56,8 @@ accountRouter.get("/details", verifyAuthToken, async (req, res, next) => {
   }
 });
 
-accountRouter.delete("/", verifyAuthToken, validateDeleteAccount, async (req, res, next) => {
+accountRouter.delete("/", verifyAuthToken, async (req, res, next) => {
   try {
-    const { password } = req.body;
     const userId = req.userId;
     const isAdmin = req.isAdmin;
 
@@ -66,7 +65,7 @@ accountRouter.delete("/", verifyAuthToken, validateDeleteAccount, async (req, re
       throw new AppError("Unauthorized: User ID not found", 401);
     }
 
-    const result = await accountService.deleteAccount({ userId, password, isAdmin });
+    const result = await accountService.deleteAccount({ userId });
     res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -89,7 +88,7 @@ accountRouter.get("/admin/all-accounts", verifyAuthToken, async (req, res, next)
 });
 
 // Admin only: Delete a user or admin account by ID
-accountRouter.delete("/admin/delete", verifyAuthToken, validateDeleteAccountByAdmin, async (req, res, next) => {
+accountRouter.delete("/admin/delete", verifyAuthToken, async (req, res, next) => {
   try {
     const isAdmin = req.isAdmin;
 
@@ -97,9 +96,9 @@ accountRouter.delete("/admin/delete", verifyAuthToken, validateDeleteAccountByAd
       throw new AppError("Unauthorized: Admins only", 403);
     }
 
-    const { accountId, isAdmin: targetIsAdmin } = req.body;
+    const { accountId } = req.body;
 
-    const result = await accountService.deleteUserAccountByAdmin({ accountId, isAdmin: targetIsAdmin });
+    const result = await accountService.deleteUserAccountByAdmin({ accountId });
     res.status(200).json(result);
   } catch (error) {
     next(error);

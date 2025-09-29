@@ -88,8 +88,6 @@ export type AccountChangePasswordArgs = {
 
 export type AccountDeleteArgs = {
   userId: number | string;
-  password: string;
-  isAdmin?: boolean;
 };
 
 export type CreditAccountArgs = {
@@ -170,5 +168,4 @@ export type UpdateTransactionArgs = {
 
 export type DeleteAccountByAdminArgs = {
   accountId: number | string;
-  isAdmin?: boolean;
 };

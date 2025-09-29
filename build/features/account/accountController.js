@@ -51,15 +51,14 @@ exports.accountRouter.get("/details", jwt_1.verifyAuthToken, async (req, res, ne
         next(error);
     }
 });
-exports.accountRouter.delete("/", jwt_1.verifyAuthToken, validation_1.validateDeleteAccount, async (req, res, next) => {
+exports.accountRouter.delete("/", jwt_1.verifyAuthToken, async (req, res, next) => {
     try {
-        const { password } = req.body;
         const userId = req.userId;
         const isAdmin = req.isAdmin;
         if (!userId) {
             throw new errorHandler_1.AppError("Unauthorized: User ID not found", 401);
         }
-        const result = await accountService_1.accountService.deleteAccount({ userId, password, isAdmin });
+        const result = await accountService_1.accountService.deleteAccount({ userId });
         res.status(200).json(result);
     }
     catch (error) {
@@ -80,14 +79,14 @@ exports.accountRouter.get("/admin/all-accounts", jwt_1.verifyAuthToken, async (r
     }
 });
 // Admin only: Delete a user or admin account by ID
-exports.accountRouter.delete("/admin/delete", jwt_1.verifyAuthToken, validation_1.validateDeleteAccountByAdmin, async (req, res, next) => {
+exports.accountRouter.delete("/admin/delete", jwt_1.verifyAuthToken, async (req, res, next) => {
     try {
         const isAdmin = req.isAdmin;
         if (!isAdmin) {
             throw new errorHandler_1.AppError("Unauthorized: Admins only", 403);
         }
-        const { accountId, isAdmin: targetIsAdmin } = req.body;
-        const result = await accountService_1.accountService.deleteUserAccountByAdmin({ accountId, isAdmin: targetIsAdmin });
+        const { accountId } = req.body;
+        const result = await accountService_1.accountService.deleteUserAccountByAdmin({ accountId });
         res.status(200).json(result);
     }
     catch (error) {
